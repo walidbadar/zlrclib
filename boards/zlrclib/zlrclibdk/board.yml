@@ -1,0 +1,6 @@
+board:
+  name: zlrclibdk
+  full_name: ZLRCLIB Development Kit
+  vendor: zlrclib
+  socs:
+  - name: esp32

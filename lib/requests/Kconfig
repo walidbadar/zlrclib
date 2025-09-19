@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2025 Muhammad Waleed Badar
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig REQUESTS
+	bool "requests"
+	depends on NET_SOCKETS 
+	depends on HTTP_CLIENT
+	depends on JSON_LIBRARY
+	depends on DNS_RESOLVER
+	help
+	  Enable requests library.
+
+if REQUESTS
+
+config REQUESTS_HTTPS_PORT
+	string
+	default "443"
+
+config REQUESTS_HTTP_PORT
+	string
+	default "80"
+
+module = REQUESTS
+module-str = requests
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
