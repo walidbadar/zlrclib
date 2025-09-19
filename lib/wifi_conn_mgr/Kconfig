@@ -1,0 +1,49 @@
+# Copyright (c) 2025 Muhammad Waleed Badar
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig WIFI_CONNECTION_MANAGER
+    bool "Wifi connection manager"
+    depends on WIFI
+    depends on NET_L2_WIFI_MGMT
+    select LED
+    help
+      Enable WiFi connection manager subsystem.
+
+if WIFI_CONNECTION_MANAGER
+
+module = WIFI_CONNECTION_MANAGER
+module-str = wifi connection manager
+source "subsys/logging/Kconfig.template.log_config"
+
+config WIFI_STATIC_SSID
+    string "Static SSID for WiFi station"
+    default "Ammad_C-25"
+
+config WIFI_STATIC_PSK
+    string "Static Password for WiFi station"
+    default "ammad175"
+
+config WIFI_CONN_RETRY_DELAY
+    int "WiFi connection retry delay in seconds"
+    default 5
+
+config NET_DHCPV4_SERVER
+    default y if WIFI_USAGE_MODE_STA_AP
+
+config WIFI_AP_STATIC_SSID
+    string "Static SSID for WiFi AP"
+    default "Zephyr-AP"
+
+config WIFI_AP_STATIC_PSK
+    string "Static Password for WiFi AP"
+    default ""
+
+config WIFI_AP_STATIC_IP_ADDR
+    string "Access-point statically configured IP address"
+    default "192.168.4.1"
+
+config WIFI_AP_STATIC_NETMASK
+    string "Access-point statically configured Netmask"
+    default "255.255.255.0"
+
+endif # WIFI_CONNECTION_MANAGER

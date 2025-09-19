@@ -1,0 +1,7 @@
+# Copyright (c) 2023-2025 Espressif Systems (Shanghai) Co., Ltd.
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_ZLRCLIBDK
+	select SOC_ESP32_D0WD_V3
+	select SOC_ESP32_PROCPU if BOARD_ZLRCLIBDK_PROCPU
+	select SOC_ESP32_APPCPU if BOARD_ZLRCLIBDK_APPCPU
