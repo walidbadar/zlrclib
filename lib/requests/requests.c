@@ -14,7 +14,23 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(requests, CONFIG_REQUESTS_LOG_LEVEL);
 
-int requests_get(struct requests_ctx *ctx, const uint8_t *url, http_response_cb_t cb)
+static int resp_cb(struct http_response *rsp, enum http_final_call final_data,
+			   void *user_data)
+{
+	static uint32_t total_pkt_size;
+	total_pkt_size += rsp->data_len;
+
+	printk("%.*s", rsp->data_len, rsp->body_frag_start);
+
+	if (final_data == HTTP_DATA_FINAL) {
+		printk("\nTotal packet size: %d\n", total_pkt_size);
+		total_pkt_size = 0;
+	}
+
+	return 0;
+}
+
+int requests_get(struct requests_ctx *ctx, const uint8_t *url)
 {
 	int ret;
 
@@ -42,7 +58,7 @@ int requests_get(struct requests_ctx *ctx, const uint8_t *url, http_response_cb_
 		ctx->req.url = ctx->url_fields.uri;
 		ctx->req.host = ctx->url_fields.hostname;
 		ctx->req.protocol = "HTTP/1.1";
-		ctx->req.response = cb;
+		ctx->req.response = resp_cb;
 		ctx->req.recv_buf = ctx->recv_buf;
 		ctx->req.recv_buf_len = sizeof(ctx->recv_buf);
 
@@ -56,20 +72,3 @@ int requests_get(struct requests_ctx *ctx, const uint8_t *url, http_response_cb_
 
 	return ret;
 }
-
-static int requests_certs(void)
-{
-	int ret;
-
-	if (IS_ENABLED(CONFIG_NET_SOCKETS_SOCKOPT_TLS)) {
-		ret = tls_credential_add(CA_CERTIFICATE_TAG, TLS_CREDENTIAL_CA_CERTIFICATE,
-					 ca_certificate, sizeof(ca_certificate));
-		if (ret < 0) {
-			LOG_ERR("Failed to register public certificate: %d", ret);
-		}
-	}
-
-	return ret;
-}
-
-SYS_INIT(requests_certs, APPLICATION, 95);

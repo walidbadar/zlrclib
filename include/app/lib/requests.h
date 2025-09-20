@@ -34,6 +34,6 @@ struct requests_ctx {
 	uint16_t status;
 };
 
-int requests_get(struct requests_ctx *ctx, const uint8_t *url, http_response_cb_t cb);
+int requests_get(struct requests_ctx *ctx, const uint8_t *url);
 
 #endif /* APP_INCLUDE_REQUESTS_H_ */

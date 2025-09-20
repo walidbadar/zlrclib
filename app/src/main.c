@@ -24,22 +24,6 @@ const uint8_t url[] ={
 };
 #endif
 
-static int resp_cb(struct http_response *rsp, enum http_final_call final_data,
-			   void *user_data)
-{
-	static uint32_t total_pkt_size;
-	total_pkt_size += rsp->data_len;
-
-	printk("%.*s", rsp->data_len, rsp->body_frag_start);
-
-	if (final_data == HTTP_DATA_FINAL) {
-		printk("\nTotal packet size: %d\n", total_pkt_size);
-		total_pkt_size = 0;
-	}
-
-	return 0;
-}
-
 int main(void)
 {
 	LOG_INF("Starting request sample");
@@ -50,7 +34,7 @@ int main(void)
 	struct requests_ctx ctx;
 
 	while (1) {
-		ret = requests_get(&ctx, url, resp_cb);
+		ret = requests_get(&ctx, url);
 		if (ret < 0) {
 			LOG_ERR("Requests GET failed: %d", ret);
 		}

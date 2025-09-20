@@ -25,7 +25,7 @@ config WIFI_STATIC_PSK
 
 config WIFI_CONN_RETRY_DELAY
     int "WiFi connection retry delay in seconds"
-    default 10
+    default 5
 
 config NET_DHCPV4_SERVER
     default y if WIFI_USAGE_MODE_STA_AP

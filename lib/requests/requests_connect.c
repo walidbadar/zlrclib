@@ -137,3 +137,20 @@ int requests_connect(struct requests_ctx *ctx)
 
 	return ret;
 }
+
+static int requests_certs(void)
+{
+	int ret;
+
+	if (IS_ENABLED(CONFIG_NET_SOCKETS_SOCKOPT_TLS)) {
+		ret = tls_credential_add(CA_CERTIFICATE_TAG, TLS_CREDENTIAL_CA_CERTIFICATE,
+					 ca_certificate, sizeof(ca_certificate));
+		if (ret < 0) {
+			LOG_ERR("Failed to register public certificate: %d", ret);
+		}
+	}
+
+	return ret;
+}
+
+SYS_INIT(requests_certs, APPLICATION, 95);
