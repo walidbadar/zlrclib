@@ -16,12 +16,12 @@ menuconfig REQUESTS
 if REQUESTS
 
 config REQUESTS_HTTPS_PORT
-	string
-	default "443"
+	int
+	default 443
 
 config REQUESTS_HTTP_PORT
-	string
-	default "80"
+	int
+	default 80
 
 module = REQUESTS
 module-str = requests

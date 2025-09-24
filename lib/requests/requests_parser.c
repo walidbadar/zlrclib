@@ -44,7 +44,7 @@ int requests_url_parser(struct requests_ctx *ctx, const uint8_t *url)
 	int ret;
 	struct http_parser_url purl;
 	uint8_t *hostname = ctx->url_fields.hostname;
-	uint8_t *port = ctx->url_fields.port;
+	uint16_t *port = &ctx->url_fields.port;
 	uint8_t *uri = ctx->url_fields.uri;
 
 	http_parser_url_init(&purl);
@@ -62,15 +62,14 @@ int requests_url_parser(struct requests_ctx *ctx, const uint8_t *url)
 		return ret;
 	}
 
-	ret = requests_url_fields_get(url, &purl, UF_PORT, port, sizeof(ctx->url_fields.port));
-	if (ret < 0) {
-		if (IS_ENABLED(CONFIG_NET_SOCKETS_SOCKOPT_TLS)) {
-			memcpy(port, CONFIG_REQUESTS_HTTPS_PORT,
-			       sizeof(CONFIG_REQUESTS_HTTPS_PORT));
-		} else {
-			memcpy(port, CONFIG_REQUESTS_HTTP_PORT, sizeof(CONFIG_REQUESTS_HTTP_PORT));
-		}
+	// ret = requests_url_fields_get(url, &purl, UF_PORT, port, sizeof(ctx->url_fields.port));
+	// if (ret < 0) {
+	if (IS_ENABLED(CONFIG_NET_SOCKETS_SOCKOPT_TLS)) {
+		*port = CONFIG_REQUESTS_HTTPS_PORT;
+	} else {
+		*port = CONFIG_REQUESTS_HTTP_PORT;
 	}
+	// }
 
 	ret = requests_url_fields_get(url, &purl, UF_PATH, uri, sizeof(ctx->url_fields.uri));
 	if (ret < 0) {
@@ -78,7 +77,7 @@ int requests_url_parser(struct requests_ctx *ctx, const uint8_t *url)
 		return ret;
 	}
 
-	LOG_INF("Hostname: %s, Port: %s, URI: %s", hostname, port, uri);
+	LOG_INF("Hostname: %s, Port: %d, URI: %s", hostname, *port, uri);
 
 	return ret;
 }
