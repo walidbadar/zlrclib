@@ -32,6 +32,7 @@ int requests_get(struct requests_ctx *ctx, http_response_cb_t cb, const uint8_t 
 
 	ret = requests_dns_lookup(ctx);
 	if (ret < 0) {
+		LOG_ERR("DNS Failed to resolve: %d", ret);
 		return ret;
 	}
 
@@ -47,7 +48,6 @@ int requests_get(struct requests_ctx *ctx, http_response_cb_t cb, const uint8_t 
 
 		ret = http_client_req(ctx->sockfd, &ctx->req, CONFIG_NET_SOCKETS_DNS_TIMEOUT, ctx);
 		close(ctx->sockfd);
-		freeaddrinfo(ctx->ai);
 	} else {
 		LOG_ERR("Cannot connect to remote (%d)", -errno);
 		ret = -ECONNABORTED;

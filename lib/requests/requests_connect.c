@@ -14,7 +14,8 @@ LOG_MODULE_REGISTER(requests_connect, CONFIG_REQUESTS_LOG_LEVEL);
 #define NET_EVENT_L4_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
 
 static struct net_mgmt_event_callback l4_cb;
-static K_SEM_DEFINE(network_connected, 0, 1);
+static K_SEM_DEFINE(ipv4_wait, 0, 1);
+static K_SEM_DEFINE(dns_wait, 0, 1);
 
 static void net_event_l4_handler(struct net_mgmt_event_callback *cb, uint64_t status,
 				 struct net_if *iface)
@@ -22,7 +23,7 @@ static void net_event_l4_handler(struct net_mgmt_event_callback *cb, uint64_t st
 	switch (status) {
 	case NET_EVENT_L4_CONNECTED:
 		LOG_INF("Network connection established (IPv4)");
-		k_sem_give(&network_connected);
+		k_sem_give(&ipv4_wait);
 		break;
 	case NET_EVENT_L4_DISCONNECTED:
 		break;
@@ -31,18 +32,55 @@ static void net_event_l4_handler(struct net_mgmt_event_callback *cb, uint64_t st
 	}
 }
 
+void requests_dns_cb(enum dns_resolve_status status, struct dns_addrinfo *info, void *user_data)
+{
+	struct requests_ctx *ctx = (struct requests_ctx *)user_data;
+	uint8_t hr_addr[NET_IPV4_ADDR_LEN];
+
+	switch (status) {
+	case DNS_EAI_CANCELED:
+	case DNS_EAI_FAIL:
+	case DNS_EAI_NODATA:
+		LOG_ERR("DNS resolving error: %d", status);
+		break;
+
+	case DNS_EAI_ALLDONE:
+		k_sem_give(&dns_wait);
+		LOG_INF("DNS resolving finished");
+		break;
+
+	default:
+		break;
+	}
+
+	if (!info) {
+		return;
+	}
+
+	if (info->ai_family == AF_INET) {
+		ctx->sa = info->ai_addr;
+	} else {
+		LOG_ERR("Invalid IP address family %d", info->ai_family);
+		ctx->err = -EINVAL;
+	}
+
+	LOG_INF("%p IPv4 address: %s", &ctx->sa,
+		net_addr_ntop(info->ai_family, &net_sin(&ctx->sa)->sin_addr, hr_addr,
+			      sizeof(hr_addr)));
+}
+
 int requests_dns_lookup(struct requests_ctx *ctx)
 {
 	int ret;
-	struct addrinfo hints;
+	uint16_t dns_id;
 
 	if (!ctx) {
 		LOG_ERR("Invalid argument");
 		return -EINVAL;
 	}
 
-	if (!strlen(ctx->url_fields.hostname) || !strlen(ctx->url_fields.port)) {
-		LOG_ERR("Invalid hostname or port");
+	if (!strlen(ctx->url_fields.hostname)) {
+		LOG_ERR("Invalid hostname");
 		return -EINVAL;
 	}
 
@@ -52,20 +90,17 @@ int requests_dns_lookup(struct requests_ctx *ctx)
 
 	LOG_INF("Waiting for IPv4 address assignment (DHCP/Static)");
 
-	k_sem_take(&network_connected, K_FOREVER);
+	k_sem_take(&ipv4_wait, K_FOREVER);
 
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-
-	/* TODO: Replace with dns_get_addr_info*/
-	ret = getaddrinfo(ctx->url_fields.hostname, ctx->url_fields.port, &hints, &ctx->ai);
+	ret = dns_get_addr_info(ctx->url_fields.hostname, DNS_QUERY_TYPE_A, &dns_id,
+				requests_dns_cb, (void *)ctx, CONFIG_NET_SOCKETS_DNS_TIMEOUT);
 	if (ret < 0) {
-		LOG_ERR("DNS lookup failed: %d", ret);
-		return ret;
+		LOG_ERR("Cannot resolve IPv4 address (%d)", ret);
+	} else {
+		k_sem_take(&dns_wait, K_FOREVER);
+		ret = ctx->err;
 	}
 
-	// freeaddrinfo(ctx->ai);
 	return ret;
 }
 
@@ -126,11 +161,14 @@ int requests_connect(struct requests_ctx *ctx)
 		return -ECONNABORTED;
 	}
 
-	ret = connect(ctx->sockfd, ctx->ai->ai_addr, ctx->ai->ai_addrlen);
+	struct sockaddr_in *sa_in = (struct sockaddr_in *)&ctx->sa;
+	sa_in->sin_port = htons(ctx->url_fields.port);
+	sa_in->sin_family = AF_INET;
+
+	ret = connect(ctx->sockfd, (struct sockaddr *)sa_in, sizeof(*sa_in));
 	if (ret < 0) {
 		LOG_ERR("Cannot connect to remote (%d)", -errno);
 		close(ctx->sockfd);
-		freeaddrinfo(ctx->ai);
 		ctx->sockfd = -1;
 		ret = -ECONNABORTED;
 	}
