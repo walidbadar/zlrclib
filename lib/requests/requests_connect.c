@@ -59,6 +59,7 @@ void requests_dns_cb(enum dns_resolve_status status, struct dns_addrinfo *info, 
 
 	if (info->ai_family == AF_INET) {
 		ctx->sa = info->ai_addr;
+		ctx->err = 0;
 	} else {
 		LOG_ERR("Invalid IP address family %d", info->ai_family);
 		ctx->err = -EINVAL;

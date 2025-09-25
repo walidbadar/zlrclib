@@ -29,7 +29,7 @@ static int resp_cb(struct http_response *rsp, enum http_final_call final_data,
 
 int main(void)
 {
-	LOG_INF("Starting request sample");
+	LOG_INF("Starting requests sample");
 
 	http_server_start();
 

@@ -20,6 +20,7 @@ manifest:
           - picolibc
           - mbedtls
           - lvgl
+          - littlefs
           - cmsis_6
           - hal_stm32
           - hal_espressif
