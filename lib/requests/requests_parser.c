@@ -28,12 +28,16 @@ static int requests_url_fields_get(const uint8_t *url, const struct http_parser_
 		return -EINVAL;
 	}
 
-	if (url_field == UF_PATH) {
+	switch (url_field) {
+	case UF_PATH:
 		memcpy(field, url + off, strlen(url));
 		field[strlen(url)] = '\0';
-	} else {
+		break;
+
+	default:
 		memcpy(field, url + off, len);
 		field[len] = '\0';
+		break;
 	}
 
 	return 0;
@@ -46,6 +50,7 @@ int requests_url_parser(struct requests_ctx *ctx, const uint8_t *url)
 	uint8_t *hostname = ctx->url_fields.hostname;
 	uint16_t *port = &ctx->url_fields.port;
 	uint8_t *uri = ctx->url_fields.uri;
+	uint8_t port_ascii[6] = {0};
 
 	http_parser_url_init(&purl);
 
@@ -62,14 +67,16 @@ int requests_url_parser(struct requests_ctx *ctx, const uint8_t *url)
 		return ret;
 	}
 
-	// ret = requests_url_fields_get(url, &purl, UF_PORT, port, sizeof(ctx->url_fields.port));
-	// if (ret < 0) {
-	if (IS_ENABLED(CONFIG_NET_SOCKETS_SOCKOPT_TLS)) {
-		*port = CONFIG_REQUESTS_HTTPS_PORT;
+	ret = requests_url_fields_get(url, &purl, UF_PORT, port_ascii, sizeof(port_ascii));
+	if (ret < 0) {
+		if (IS_ENABLED(CONFIG_NET_SOCKETS_SOCKOPT_TLS)) {
+			*port = CONFIG_REQUESTS_HTTPS_PORT;
+		} else {
+			*port = CONFIG_REQUESTS_HTTP_PORT;
+		}
 	} else {
-		*port = CONFIG_REQUESTS_HTTP_PORT;
+		*port = atoi(port_ascii);
 	}
-	// }
 
 	ret = requests_url_fields_get(url, &purl, UF_PATH, uri, sizeof(ctx->url_fields.uri));
 	if (ret < 0) {
