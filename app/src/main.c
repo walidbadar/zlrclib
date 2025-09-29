@@ -31,7 +31,8 @@ int main(void)
 {
 	LOG_INF("Starting requests sample");
 
-	http_server_start();
+	if(IS_ENABLED(CONFIG_HTTP_SERVER))
+		http_server_start();
 
 	int ret;
 	struct requests_ctx ctx;

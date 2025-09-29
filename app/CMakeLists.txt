@@ -5,12 +5,20 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 find_package(Python REQUIRED COMPONENTS Interpreter)
 
-project(requests)
+project(zlrclib)
 
 option(INCLUDE_HTML_CONTENT "Include the HTML content" ON)
 
-target_sources(app PRIVATE src/main.c)
+set (APP_SOURCES 
+   src/zlrclib/zlrclib_parser.c
+   src/main.c
+)
+
 target_sources_ifdef(CONFIG_NET_SAMPLE_HTTP_SERVICE app PRIVATE src/http_server.c)
+
+target_sources(app PRIVATE 
+   ${APP_SOURCES}
+)
 
 target_link_libraries(app PRIVATE zephyr_interface zephyr)
 
@@ -28,7 +36,7 @@ foreach(web_resource
     )
   generate_inc_file_for_target(
     app
-    ${CMAKE_SOURCE_DIR}/../web_resources/${web_resource}
+    ${CMAKE_SOURCE_DIR}/web_resources/${web_resource}
     ${gen_dir}/${web_resource}.gz.inc
     --gzip
   )
@@ -40,7 +48,7 @@ foreach(cert
     )
   generate_inc_file_for_target(
     app
-    ${CMAKE_SOURCE_DIR}/../certs/${cert}
+    ${CMAKE_SOURCE_DIR}/certs/${cert}
     ${gen_dir}/${cert}.inc
     )
 endforeach()
