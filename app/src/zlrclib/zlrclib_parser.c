@@ -39,6 +39,7 @@ int zlrclib_track_parser(struct zlrclib_track *track, uint8_t *buf, size_t len)
 		LOG_ERR("Not all values decoded; Expected return code %d but got %d", ret_json,
 			ret);
 		return ret;
+<<<<<<< HEAD
 	} else {
 		track->id;
 		track->name;
@@ -48,6 +49,8 @@ int zlrclib_track_parser(struct zlrclib_track *track, uint8_t *buf, size_t len)
 		track->instrumental;
 		track->plainLyrics;
 		track->syncedLyrics;
+=======
+>>>>>>> b138496 (Added zlrclib track parser)
 	}
 
 	return ret;
