@@ -1,49 +1,85 @@
+#
 # Copyright (c) 2025 Muhammad Waleed Badar
+#
 # SPDX-License-Identifier: Apache-2.0
+#
 
 menuconfig WIFI_CONNECTION_MANAGER
-    bool "Wifi connection manager"
+    bool "Enable WiFi Connection Manager"
     depends on WIFI
     depends on NET_L2_WIFI_MGMT
     select LED
     help
-      Enable WiFi connection manager subsystem.
+      Enable the WiFi connection manager subsystem, which handles WiFi
+      connection and disconnection logic, retry policies, and optional
+      access-point and DHCP server support.
 
 if WIFI_CONNECTION_MANAGER
 
-module = WIFI_CONNECTION_MANAGER
-module-str = wifi connection manager
-source "subsys/logging/Kconfig.template.log_config"
+menu "WiFi Station Configuration"
 
 config WIFI_STATIC_SSID
-    string "Static SSID for WiFi station"
-    default "Ammad_C-25"
+    string "WiFi SSID"
+    default "YourSSID"
+    help
+      The SSID of the WiFi network to connect to in station (client) mode.
 
 config WIFI_STATIC_PSK
-    string "Static Password for WiFi station"
-    default "ammad175"
+    string "WiFi Password"
+    default "YourPassword"
+    help
+      The pre-shared key (password) for the WiFi network.
 
 config WIFI_CONN_RETRY_DELAY
-    int "WiFi connection retry delay in seconds"
+    int "WiFi Connection Retry Delay (seconds)"
     default 5
+    help
+      Time in seconds to wait before retrying a failed connection attempt.
 
-config NET_DHCPV4_SERVER
-    default y if WIFI_USAGE_MODE_STA_AP
+endmenu  # WiFi Station Configuration
+
+menu "WiFi Access Point Configuration"
 
 config WIFI_AP_STATIC_SSID
-    string "Static SSID for WiFi AP"
+    string "Access Point SSID"
     default "Zephyr-AP"
+    help
+      SSID that will be broadcast when running in AP mode.
 
 config WIFI_AP_STATIC_PSK
-    string "Static Password for WiFi AP"
+    string "Access Point Password"
     default ""
+    help
+      WPA2 password for the access point. Leave empty for open network.
 
 config WIFI_AP_STATIC_IP_ADDR
-    string "Access-point statically configured IP address"
+    string "Static IP Address"
     default "192.168.4.1"
+    help
+      IP address assigned to the device in AP mode.
 
 config WIFI_AP_STATIC_NETMASK
-    string "Access-point statically configured Netmask"
+    string "Static Netmask"
     default "255.255.255.0"
+    help
+      Network mask used in AP mode.
 
-endif # WIFI_CONNECTION_MANAGER
+endmenu  # WiFi Access Point Configuration
+
+menu "DHCP Server Configuration"
+
+config NET_DHCPV4_SERVER
+    bool "Enable DHCP Server"
+    default y if WIFI_USAGE_MODE_STA_AP
+    help
+      Enable a DHCP server when in AP mode. Devices connecting to the
+      AP will be assigned IP addresses automatically.
+
+endmenu  # DHCP Server Configuration
+
+module = WIFI_CONNECTION_MANAGER
+module-str = wifi_conn_mgr
+source "subsys/logging/Kconfig.template.log_config"
+
+endif  # WIFI_CONNECTION_MANAGER
+

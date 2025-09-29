@@ -5,26 +5,34 @@
 #
 
 menuconfig REQUESTS
-	bool "requests"
+	bool "Enable Requests library"
 	depends on NET_SOCKETS 
 	depends on HTTP_CLIENT
 	depends on JSON_LIBRARY
 	depends on DNS_RESOLVER
 	help
-	  Enable requests library.
+	  Enable the requests library for performing HTTP(S) requests.
 
 if REQUESTS
 
-config REQUESTS_HTTPS_PORT
-	int
-	default 443
+menu "Requests Configuration"
 
 config REQUESTS_HTTP_PORT
-	int
+	int "Default HTTP port"
 	default 80
+	help
+	  The default port used for HTTP requests.
+
+config REQUESTS_HTTPS_PORT
+	int "Default HTTPS port"
+	default 443
+	help
+	  The default port used for HTTPS requests.
+
+endmenu
 
 module = REQUESTS
 module-str = requests
 source "subsys/logging/Kconfig.template.log_config"
 
-endif
+endif # REQUESTS
