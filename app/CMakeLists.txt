@@ -11,7 +11,6 @@ option(INCLUDE_HTML_CONTENT "Include the HTML content" ON)
 
 target_sources(app PRIVATE src/main.c)
 target_sources_ifdef(CONFIG_NET_SAMPLE_HTTP_SERVICE app PRIVATE src/http_server.c)
-target_sources_ifdef(CONFIG_NET_SAMPLE_WEBSOCKET_SERVICE app PRIVATE src/ws.c)
 
 target_link_libraries(app PRIVATE zephyr_interface zephyr)
 
