@@ -1,15 +1,21 @@
+/*
+ * Copyright (c) 2025 Muhammad Waleed Badar
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #ifndef APP_INCLUDE_ZLRCLIB_TRACK_H
 #define APP_INCLUDE_ZLRCLIB_TRACK_H
 
 struct zlrclib_track {
 	uint32_t id;
 	const char *name;
-	const char *trackName;
-	const char *artistName;
-	const char *albumName;
+	const char *track_name;
+	const char *artist_name;
+	const char *album_name;
 	bool instrumental;
-	const char *plainLyrics;
-	const char *syncedLyrics;
+	const char *plain_lyrics;
+	const char *synced_lyrics;
 };
 
 static uint8_t track1[] = "{"

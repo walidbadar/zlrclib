@@ -7,48 +7,24 @@ find_package(Python REQUIRED COMPONENTS Interpreter)
 
 project(zlrclib)
 
-option(INCLUDE_HTML_CONTENT "Include the HTML content" ON)
+add_subdirectory(src/http_server)
 
-set (APP_SOURCES 
-   src/zlrclib/zlrclib_parser.c
-   src/main.c
+set(APP_SOURCES 
+  src/zlrclib_parser.c
+  src/main.c
 )
 
-target_sources_ifdef(CONFIG_NET_SAMPLE_HTTP_SERVICE app PRIVATE src/http_server.c)
-
-target_sources(app PRIVATE 
-   ${APP_SOURCES}
-)
-
+target_sources(app PRIVATE ${APP_SOURCES})
 target_link_libraries(app PRIVATE zephyr_interface zephyr)
 
-zephyr_linker_sources(SECTIONS sections-rom.ld)
-zephyr_linker_section_ifdef(CONFIG_NET_SAMPLE_HTTP_SERVICE NAME
-				http_resource_desc_test_http_service
-				KVMA RAM_REGION GROUP RODATA_REGION)
-        
-set(gen_dir ${ZEPHYR_BINARY_DIR}/include/generated/)
-
-# Generate the HTML content
-foreach(web_resource
-  index.html
-  main.js
-    )
-  generate_inc_file_for_target(
-    app
-    ${CMAKE_SOURCE_DIR}/web_resources/${web_resource}
-    ${gen_dir}/${web_resource}.gz.inc
-    --gzip
+if(CONFIG_NET_SOCKETS_SOCKOPT_TLS)
+  foreach(cert
+    lrclib.der
   )
-endforeach()
-
-# Generate the certificates
-foreach(cert
-	lrclib.der
+    generate_inc_file_for_target(
+      app
+      ${CMAKE_SOURCE_DIR}/certs/${cert}
+      ${ZEPHYR_BINARY_DIR}/include/generated/${cert}.inc
     )
-  generate_inc_file_for_target(
-    app
-    ${CMAKE_SOURCE_DIR}/certs/${cert}
-    ${gen_dir}/${cert}.inc
-    )
-endforeach()
+  endforeach()
+endif()

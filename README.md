@@ -1,11 +1,17 @@
 # zlrclib 🎵
 
-<a href="https://zephyrproject-rtos.github.io/zlrclib">
-  <img alt="Documentation" src="https://img.shields.io/badge/documentation-3D578C?logo=sphinx&logoColor=white">
-</a>
-<a href="https://zephyrproject-rtos.github.io/zlrclib/doxygen">
-  <img alt="API Documentation" src="https://img.shields.io/badge/API-documentation-3D578C?logo=c&logoColor=white">
-</a>
+```text
+███████╗ ██╗      ██████╗   ██████╗ ██╗      ██╗ ██████╗ 
+╚══███╔╝ ██║      ██╔══██╗ ██╔════╝ ██║      ██║ ██╔══██╗
+  ███╔╝  ██║      ██████╔╝ ██║      ██║      ██║ ██████╔╝
+ ███╔╝   ██║      ██╔══██╗ ██║      ██║      ██║ ██╔══██╗
+███████╗ ███████╗ ██║  ██║ ╚██████╗ ███████╗ ██║ ██████╔╝
+╚══════╝ ╚══════╝ ╚═╝  ╚═╝  ╚═════╝ ╚══════╝ ╚═╝ ╚═════╝ 
+```
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Zephyr RTOS](https://img.shields.io/badge/RTOS-Zephyr-blue)](https://zephyrproject.org/)
+
+## Overview
 
 zlrclib is an open source firmware for requesting lyrics from [lrclib.net](https://lrclib.net) 
 and displaying them on OLED displays.
