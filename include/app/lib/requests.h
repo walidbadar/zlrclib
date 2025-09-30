@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#ifndef APP_INCLUDE_REQUESTS_H_
-#define APP_INCLUDE_REQUESTS_H_
+#ifndef LIB_REQUESTS_H_
+#define LIB_REQUESTS_H_
 
 #include <stdbool.h>
 #include <zephyr/net/conn_mgr_monitor.h>
@@ -33,4 +33,4 @@ struct requests_ctx {
 
 int requests_get(struct requests_ctx *ctx, http_response_cb_t cb, const uint8_t *url);
 
-#endif /* APP_INCLUDE_REQUESTS_H_ */
+#endif /* LIB_REQUESTS_H_ */
