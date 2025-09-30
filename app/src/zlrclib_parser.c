@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <string.h>
-
 #include <app/zlrclib.h>
 #include <zephyr/data/json.h>
 #include <zephyr/logging/log.h>
@@ -37,8 +32,8 @@ int zlrclib_track_parser(struct zlrclib_track *track, uint8_t *buf, size_t len)
 	if (ret < 0) {
 		LOG_ERR("JSON Parse Error: %d", ret);
 		return ret;
-	} 
-	
+	}
+
 	if (ret != ret_json) {
 		LOG_ERR("Not all values decoded; Expected return code %d but got %d", ret_json,
 			ret);

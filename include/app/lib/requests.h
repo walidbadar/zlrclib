@@ -27,7 +27,7 @@ struct requests_ctx {
 	struct http_request req;
 	struct http_response resp;
 	uint8_t recv_buf[NET_IPV4_MTU];
-	uint16_t status;
+	uint16_t recv_buf_len;
 	int err;
 };
 

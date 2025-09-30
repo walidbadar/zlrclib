@@ -11,10 +11,10 @@
 #include <zephyr/fs/littlefs.h>
 #include <zephyr/sd/sd_spec.h>
 
-int zlrclib_cd(char *path);
-int zlrclib_ls(char *path);
-int zlrclib_pwd(char *path);
-int zlrclib_fwrite(char *file_name, char *buf);
-int zlrclib_fread(const char *file_name, char *buf, size_t buf_size);
+int zlrclib_cd(uint8_t *path);
+int zlrclib_ls(uint8_t *path);
+int zlrclib_pwd(uint8_t *path);
+int zlrclib_fwrite(const uint8_t *file_name, uint8_t *buf, size_t buf_len);
+int zlrclib_fread(const uint8_t *file_name, uint8_t *buf, size_t buf_len);
 
 #endif /* ZLRCLIB_FILESYSTEM_H_ */

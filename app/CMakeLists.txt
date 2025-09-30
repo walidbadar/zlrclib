@@ -7,11 +7,13 @@ find_package(Python REQUIRED COMPONENTS Interpreter)
 
 project(zlrclib)
 
+add_subdirectory(src/filesystem)
 add_subdirectory(src/http_server)
 
 set(APP_SOURCES 
-  src/zlrclib_parser.c
   src/main.c
+  src/zlrclib_parser.c
+  src/zlrclib_tracks.c
 )
 
 target_sources(app PRIVATE ${APP_SOURCES})

@@ -20,13 +20,9 @@ LOG_MODULE_REGISTER(zlrclib_filesystem);
 #retor "No disk device defined, is your board supported?"
 #endif
 
-FS_LITTLEFS_DECLARE_CUSTOM_CONFIG(
-	lfs_data,
-	CONFIG_SDHC_BUFFER_ALIGNMENT,
-	SDMMC_DEFAULT_BLOCK_SIZE,
-	SDMMC_DEFAULT_BLOCK_SIZE,
-	SDMMC_DEFAULT_BLOCK_SIZE,
-	2 * SDMMC_DEFAULT_BLOCK_SIZE);
+FS_LITTLEFS_DECLARE_CUSTOM_CONFIG(lfs_data, CONFIG_SDHC_BUFFER_ALIGNMENT, SDMMC_DEFAULT_BLOCK_SIZE,
+				  SDMMC_DEFAULT_BLOCK_SIZE, SDMMC_DEFAULT_BLOCK_SIZE,
+				  2 * SDMMC_DEFAULT_BLOCK_SIZE);
 
 static struct fs_mount_t lfs_mnt = {
 	.type = FS_LITTLEFS,
@@ -47,39 +43,37 @@ static struct fs_mount_t lfs_mnt = {
 #endif
 
 #define MAX_PATH_LEN 128
-#define MAX_FILENAME_LEN 128
-#define MAX_INPUT_LEN 20
 
 /* Maintenance guarantees this begins with '/' and is NUL-terminated. */
-static char cwd[MAX_PATH_LEN] = "/";
+static uint8_t cwd[MAX_PATH_LEN] = "/";
 
-static int create_abs_path(const char *file_name, char *path)
+static int create_abs_path(const uint8_t *file_name, uint8_t *path)
 {
 	int ret;
 
-    if (!file_name || !path) {
-        return -EINVAL;
-    }
+	if (!file_name || !path) {
+		return -EINVAL;
+	}
 
-    ret = snprintf(path, MAX_PATH_LEN, "%s/%s", cwd, file_name);
+	ret = snprintf(path, MAX_PATH_LEN, "%s/%s", cwd, file_name);
 
-    if (ret < 0) {
-        return -errno;
-    }
+	if (ret < 0) {
+		return ret;
+	}
 
-    if (ret >= MAX_PATH_LEN) {
-        fprintf(stderr, "Error: Path exceeds maximum length (%d bytes)\n", MAX_PATH_LEN);
-        return -ENAMETOOLONG;
-    }
+	else if (ret >= MAX_PATH_LEN) {
+		fprintf(stderr, "Error: Path exceeds maximum length (%d bytes)\n", MAX_PATH_LEN);
+		return -ENAMETOOLONG;
+	}
 
-    return ret;
+	return ret;
 }
 
-int zlrclib_cd(char *path)
+int zlrclib_cd(uint8_t *path)
 {
 	int ret;
 
-	if (!path || *path == '\0'){
+	if (!path || *path == '\0') {
 		LOG_ERR("Invalid path");
 		return -EINVAL;
 	}
@@ -87,7 +81,7 @@ int zlrclib_cd(char *path)
 	struct fs_dirent entry;
 
 	if (strcmp(path, "..") == 0) {
-		char *prev = strrchr(cwd, '/');
+		uint8_t *prev = strrchr(cwd, '/');
 
 		if (!prev || prev == cwd) {
 			strcpy(cwd, "/");
@@ -116,15 +110,15 @@ int zlrclib_cd(char *path)
 	return 0;
 }
 
-int zlrclib_ls(char *path)
+int zlrclib_ls(uint8_t *path)
 {
 	int ret;
 
-	if (!path || *path == '\0'){
+	if (!path || *path == '\0') {
 		LOG_ERR("Invalid path");
 		return -EINVAL;
 	}
-	
+
 	struct fs_dir_t dir;
 	fs_dir_t_init(&dir);
 
@@ -136,7 +130,7 @@ int zlrclib_ls(char *path)
 
 	while (1) {
 		struct fs_dirent entry;
-		const char *name_end;
+		const uint8_t *name_end;
 
 		ret = fs_readdir(&dir, &entry);
 		if (ret != 0) {
@@ -158,9 +152,9 @@ int zlrclib_ls(char *path)
 	return 0;
 }
 
-int zlrclib_pwd(char *path)
+int zlrclib_pwd(uint8_t *path)
 {
-	if (!path){
+	if (!path) {
 		LOG_ERR("Invalid path");
 		return -EINVAL;
 	}
@@ -172,14 +166,14 @@ int zlrclib_pwd(char *path)
 	return 0;
 }
 
-int zlrclib_fwrite(char *file_name, char *buf)
+int zlrclib_fwrite(const uint8_t *file_name, uint8_t *buf, size_t buf_len)
 {
 	int ret;
 	struct fs_file_t file;
-	char path[MAX_PATH_LEN];
+	uint8_t path[MAX_PATH_LEN];
 
-	if (!file_name && !buf){
-		LOG_ERR("Invalid argument");
+	if (!file_name || !buf || buf_len < 1) {
+		LOG_ERR("fwrite: Invalid argument");
 		return -EINVAL;
 	}
 
@@ -188,11 +182,17 @@ int zlrclib_fwrite(char *file_name, char *buf)
 	fs_file_t_init(&file);
 
 	ret = fs_open(&file, path, FS_O_CREATE | FS_O_WRITE);
-	if (ret >= 0) {
-		fs_write(&file, buf, strlen(buf));
-		LOG_INF("Created test file: %s", path);
+	if (ret < 0) {
+		LOG_ERR("Failed to open file: %s (%d)", path, ret);
+		fs_close(&file);
+		return ret;
+	}
+
+	ret = fs_write(&file, buf, buf_len);
+	if (ret < 0) {
+		LOG_ERR("Failed to write file: %s (%d)", path, ret);
 	} else {
-		LOG_ERR("Failed to create test file: %s", path);
+		LOG_INF("Wrote %d bytes to %s", ret, path);
 	}
 
 	fs_close(&file);
@@ -200,48 +200,47 @@ int zlrclib_fwrite(char *file_name, char *buf)
 	return ret;
 }
 
-int zlrclib_fread(const char *file_name, char *buf, size_t buf_size)
+int zlrclib_fread(const uint8_t *file_name, uint8_t *buf, size_t buf_len)
 {
-    int ret;
-    struct fs_file_t file;
-    char path[MAX_PATH_LEN];
+	int ret;
+	struct fs_file_t file;
+	uint8_t path[MAX_PATH_LEN];
 
-    if (!file_name || !buf || buf_size == 0) {
-        LOG_ERR("Invalid argument");
-        return -EINVAL;
-    }
+	if (!file_name || !buf || buf_len < 1) {
+		LOG_ERR("fread: Invalid argument");
+		return -EINVAL;
+	}
 
-    create_abs_path(file_name, path);
+	create_abs_path(file_name, path);
 
-    fs_file_t_init(&file);
+	fs_file_t_init(&file);
 
-    ret = fs_open(&file, path, FS_O_READ);
-    if (ret < 0) {
-        LOG_ERR("Failed to open file: %s (%d)", path, ret);
-        return ret;
-    }
+	ret = fs_open(&file, path, FS_O_READ);
+	if (ret < 0) {
+		LOG_ERR("Failed to open file: %s (%d)", path, ret);
+		return ret;
+	}
 
-    ssize_t bytes_read = fs_read(&file, buf, buf_size - 1);
-    if (bytes_read < 0) {
-        LOG_ERR("Failed to read file: %s (%d)", path, (int)bytes_read);
-        fs_close(&file);
-        return bytes_read;
-    }
+	ret = fs_read(&file, buf, buf_len);
+	if (ret < 0) {
+		LOG_ERR("Failed to read file: %s (%d)", path, ret);
+		fs_close(&file);
+		return ret;
+	}
 
-    buf[bytes_read] = '\0';
+	buf[ret] = '\0';
 
-    LOG_INF("Read %d bytes from %s", (int)bytes_read, path);
+	LOG_INF("Read %d bytes from %s", ret, path);
 
-    fs_close(&file);
+	fs_close(&file);
 
-    return bytes_read;
+	return ret;
 }
 
 static int zlrclib_mount(void)
 {
 	int ret;
 
-	/* Mount the filesystem */
 	ret = fs_mount(&lfs_mnt);
 	if (ret < 0) {
 		LOG_ERR("Mount failed: %d", ret);
@@ -249,22 +248,6 @@ static int zlrclib_mount(void)
 	}
 
 	zlrclib_cd("/root");
-
-#if 1
-	char *file_name = "track";
-	char buf[1024];
-	char pwd_path[MAX_PATH_LEN] = "";
-
-	zlrclib_cd("/root");
-
-	zlrclib_ls(cwd);
-
-	zlrclib_fread(file_name, buf, sizeof(buf));
-	LOG_INF("%s", buf);
-
-	zlrclib_pwd(pwd_path);
-	LOG_INF("pwd: %s", pwd_path);
-#endif
 
 	return 0;
 }
