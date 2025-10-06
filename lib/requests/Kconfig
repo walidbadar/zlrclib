@@ -29,6 +29,16 @@ config REQUESTS_HTTPS_PORT
 	help
 	  The default port used for HTTPS requests.
 
+config REQUESTS_SHELL
+	bool "Enable shell commands for Requests library"
+	depends on SHELL
+	select LOG
+	help
+	  Enable Zephyr shell commands for the Requests library.
+	  This allows you to perform HTTP GET and POST requests directly
+	  from the Zephyr shell, e.g.:
+	    uart:~$ requests get http://google.com/
+
 endmenu
 
 module = REQUESTS

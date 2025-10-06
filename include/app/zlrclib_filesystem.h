@@ -7,10 +7,6 @@
 #include <string.h>
 #include <limits.h>
 
-#include <zephyr/fs/fs.h>
-#include <zephyr/fs/littlefs.h>
-#include <zephyr/sd/sd_spec.h>
-
 int zlrclib_cd(uint8_t *path);
 int zlrclib_ls(uint8_t *path);
 int zlrclib_pwd(uint8_t *path);

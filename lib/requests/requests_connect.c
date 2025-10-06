@@ -91,14 +91,22 @@ int requests_dns_lookup(struct requests_ctx *ctx)
 
 	LOG_INF("Waiting for IPv4 address assignment (DHCP/Static)");
 
-	k_sem_take(&ipv4_wait, K_FOREVER);
+	ret = k_sem_take(&ipv4_wait, K_MSEC(CONFIG_NET_SOCKETS_CONNECT_TIMEOUT));
+	if (ret < 0) {
+		LOG_ERR("Cannot resolve IPv4 address (%d)", ret);
+		return ret;
+	}
 
 	ret = dns_get_addr_info(ctx->url_fields.hostname, DNS_QUERY_TYPE_A, &dns_id,
 				requests_dns_cb, (void *)ctx, CONFIG_NET_SOCKETS_DNS_TIMEOUT);
 	if (ret < 0) {
-		LOG_ERR("Cannot resolve IPv4 address (%d)", ret);
+		LOG_ERR("Cannot resolve DNS address (%d)", ret);
 	} else {
-		k_sem_take(&dns_wait, K_FOREVER);
+		ret = k_sem_take(&dns_wait, K_MSEC(CONFIG_NET_SOCKETS_DNS_TIMEOUT));
+		if (ret < 0) {
+			return ret;
+		}
+
 		ret = ctx->err;
 	}
 

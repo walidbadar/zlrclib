@@ -4,10 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <app/zlrclib_filesystem.h>
 #include <zephyr/init.h>
-#include <zephyr/logging/log.h>
+#include <zephyr/fs/fs.h>
+#include <zephyr/fs/littlefs.h>
+#include <zephyr/sd/sd_spec.h>
+#include <app/zlrclib_filesystem.h>
 
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib_filesystem);
 
 /* TODO: Implement dynamic storage dev selection */

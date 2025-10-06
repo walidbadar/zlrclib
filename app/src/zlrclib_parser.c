@@ -1,6 +1,6 @@
-#include <app/zlrclib.h>
 #include <zephyr/data/json.h>
 #include <zephyr/logging/log.h>
+#include <app/zlrclib.h>
 
 LOG_MODULE_REGISTER(zlrclib_parser);
 
