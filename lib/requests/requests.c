@@ -20,13 +20,13 @@ static int requests_init(struct requests_ctx *ctx, const uint8_t *url)
 
 	ret = requests_url_parser(ctx, url);
 	if (ret < 0) {
-		LOG_ERR("Failed to parse URL: %d", ret);
+		LOG_ERR("Failed to parse URL (%d)", ret);
 		return ret;
 	}
 
 	ret = requests_dns_lookup(ctx);
 	if (ret < 0) {
-		LOG_ERR("DNS Failed to resolve: %d", ret);
+		LOG_ERR("DNS Failed to resolve (%d)", ret);
 		return ret;
 	}
 
@@ -44,7 +44,7 @@ int requests_get(struct requests_ctx *ctx, http_response_cb_t cb, const uint8_t 
 
 	ret = requests_init(ctx, url);
 	if (ret < 0) {
-		LOG_ERR("Requests init failed: %d", ret);
+		LOG_ERR("Requests init failed (%d)", ret);
 		return ret;
 	}
 
@@ -80,7 +80,7 @@ int requests_post(struct requests_ctx *ctx, http_response_cb_t cb, const uint8_t
 
 	ret = requests_init(ctx, url);
 	if (ret < 0) {
-		LOG_ERR("Requests initialization failed: %d", ret);
+		LOG_ERR("Requests init failed (%d)", ret);
 		return ret;
 	}
 

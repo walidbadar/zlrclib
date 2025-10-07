@@ -16,7 +16,7 @@
 zlrclib is an open source firmware for requesting lyrics from [lrclib.net](https://lrclib.net) 
 and displaying them on OLED displays.
 
-The firmware implements a lightweight client for the lrclib.net API, making it possible to fetch time-synced or unsynced lyrics directly from the internet. Lyrics can then be rendered on small displays such as SSD1306 or SH1106-based OLEDs, commonly used in embedded projects.
+The firmware implements a lightweight client for the lrclib.net API, making it possible to fetch time-synced or unsynced lyrics directly from the internet. Lyrics can then be rendered on small displays that are commonly used in embedded projects.
 
 Built on top of the Zephyr RTOS, zlrclib demonstrates how to integrate networking, HTTP APIs, and text rendering in resource-constrained environments.
 
@@ -33,11 +33,36 @@ zlrclib is licensed under the Apache-2.0 license. The documentation is licensed 
 [west_ext]: https://docs.zephyrproject.org/latest/develop/west/extensions.html
 [runner_ext]: https://docs.zephyrproject.org/latest/develop/modules.html#external-runners
 
+## Firmware Features
+
+The zlrclib firmware supports the following features, some of which depend on hardware support:
+
+- [✔️] Wi-Fi provisioning via http server
+- [✔️] Requests library based on http client
+- [✔️] Filesystem to manage large data
+- [✖️] Display lyrics using lvgl module 
+
 ## Getting Started
 
 Before getting started, make sure you have a proper Zephyr development
 environment. Follow the official
 [Zephyr Getting Started Guide](https://docs.zephyrproject.org/latest/getting_started/index.html).
+
+### Prerequisites
+
+#### On the Linux Host, find the Zephyr net-tools project, which can either be found in a Zephyr standard installation under the tools/net-tools directory or installed stand alone from its own git repository:
+
+```shell
+git clone https://github.com/zephyrproject-rtos/net-tools
+cd net-tools
+make
+```
+
+#### To run with native_sim board first setup network interface with NAT
+
+```shell
+./net-setup.sh start --config nat.conf
+```
 
 ### Initialization
 
@@ -68,14 +93,7 @@ You can use the `zlrclibdk/esp32/procpu` board found in this
 repository. Note that Zephyr sample boards may be used if an
 appropriate overlay is provided (see `app/boards`).
 
-A sample debug configuration is also provided. To apply it, run the following
-command:
-
-```shell
-west build -b $BOARD app -- -DEXTRA_CONF_FILE=debug.conf
-```
-
-Once you have built the application, run the following command to flash it:
+Once you have built the application, run the following command:
 
 ```shell
 west flash

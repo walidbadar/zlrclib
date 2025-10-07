@@ -41,12 +41,12 @@ void requests_dns_cb(enum dns_resolve_status status, struct dns_addrinfo *info, 
 	case DNS_EAI_CANCELED:
 	case DNS_EAI_FAIL:
 	case DNS_EAI_NODATA:
-		LOG_ERR("DNS resolving error: %d", status);
+		LOG_ERR("DNS resolve (%d)", status);
 		break;
 
 	case DNS_EAI_ALLDONE:
+		LOG_INF("DNS resolved");
 		k_sem_give(&dns_wait);
-		LOG_INF("DNS resolving finished");
 		break;
 
 	default:
@@ -65,7 +65,7 @@ void requests_dns_cb(enum dns_resolve_status status, struct dns_addrinfo *info, 
 		ctx->err = -EINVAL;
 	}
 
-	LOG_INF("%p IPv4 address: %s", &ctx->sa,
+	LOG_INF("Host IPv4 address: %s",
 		net_addr_ntop(info->ai_family, &net_sin(&ctx->sa)->sin_addr, hr_addr,
 			      sizeof(hr_addr)));
 }
@@ -193,7 +193,7 @@ static int requests_certs(void)
 		ret = tls_credential_add(CA_CERTIFICATE_TAG, TLS_CREDENTIAL_CA_CERTIFICATE,
 					 ca_certificate, sizeof(ca_certificate));
 		if (ret < 0) {
-			LOG_ERR("Failed to register public certificate: %d", ret);
+			LOG_ERR("Failed to register public certificate (%d)", ret);
 		}
 	}
 

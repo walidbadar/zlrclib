@@ -34,7 +34,7 @@ static int cmd_requests_get(const struct shell *sh, size_t argc, char **argv)
 
 	ret = requests_get(&req_ctx, http_response_handler, argv[1]);
 	if (ret < 0) {
-		shell_error(sh, "GET request failed: %d", ret);
+		shell_error(sh, "GET request failed (%d)", ret);
 		return ret;
 	}
 

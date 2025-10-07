@@ -14,6 +14,7 @@
 #include <zephyr/net/http/client.h>
 
 struct requests_url_fields {
+	uint8_t schema[8];
 	uint8_t hostname[NI_MAXHOST];
 	uint16_t port;
 	uint8_t uri[256];

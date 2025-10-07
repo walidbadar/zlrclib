@@ -17,9 +17,9 @@ LOG_MODULE_REGISTER(zlrclib);
 #define TRACK  "mystical+magical"
 
 #if defined(CONFIG_NET_SOCKETS_SOCKOPT_TLS)
-const char *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_name=" TRACK;
+const uint8_t *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_name=" TRACK;
 #else
-const uint8_t *url = "http://google.com/";
+const uint8_t *url = "https://google.com";
 #endif
 
 static int resp_cb(struct http_response *rsp, enum http_final_call final_data, void *user_data)

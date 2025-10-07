@@ -16,11 +16,6 @@ static int requests_url_fields_get(const uint8_t *url, const struct http_parser_
 				   enum http_parser_url_fields url_field, uint8_t *field,
 				   uint16_t field_len)
 {
-	if (!url || !purl || !field) {
-		LOG_ERR("Invalid argument");
-		return -EINVAL;
-	}
-
 	uint16_t off = purl->field_data[url_field].off;
 	uint16_t len = purl->field_data[url_field].len;
 
@@ -28,16 +23,12 @@ static int requests_url_fields_get(const uint8_t *url, const struct http_parser_
 		return -EINVAL;
 	}
 
-	switch (url_field) {
-	case UF_PATH:
+	if (url_field == UF_PATH) {
 		memcpy(field, url + off, strlen(url));
 		field[strlen(url)] = '\0';
-		break;
-
-	default:
+	} else {
 		memcpy(field, url + off, len);
 		field[len] = '\0';
-		break;
 	}
 
 	return 0;
@@ -47,23 +38,31 @@ int requests_url_parser(struct requests_ctx *ctx, const uint8_t *url)
 {
 	int ret;
 	struct http_parser_url purl;
+	uint8_t *schema = ctx->url_fields.schema;
 	uint8_t *hostname = ctx->url_fields.hostname;
 	uint16_t *port = &ctx->url_fields.port;
 	uint8_t *uri = ctx->url_fields.uri;
-	uint8_t port_ascii[6] = {0};
+	uint8_t port_ascii[6];
 
 	http_parser_url_init(&purl);
 
 	ret = http_parser_parse_url(url, strlen(url), 0, &purl);
 	if (ret < 0) {
-		LOG_ERR("Error parsing URL: %d\n", ret);
+		LOG_ERR("Error parsing URL (%d)", ret);
+		return ret;
+	}
+
+	ret = requests_url_fields_get(url, &purl, UF_SCHEMA, schema,
+				      sizeof(ctx->url_fields.schema));
+	if (ret < 0) {
+		LOG_ERR("Error parsing schema (%d)", ret);
 		return ret;
 	}
 
 	ret = requests_url_fields_get(url, &purl, UF_HOST, hostname,
 				      sizeof(ctx->url_fields.hostname));
 	if (ret < 0) {
-		LOG_ERR("Error parsing hostname: %d\n", ret);
+		LOG_ERR("Error parsing hostname (%d)", ret);
 		return ret;
 	}
 
@@ -80,11 +79,10 @@ int requests_url_parser(struct requests_ctx *ctx, const uint8_t *url)
 
 	ret = requests_url_fields_get(url, &purl, UF_PATH, uri, sizeof(ctx->url_fields.uri));
 	if (ret < 0) {
-		LOG_ERR("Error parsing URI: %d\n", ret);
-		return ret;
+		memcpy(uri, "/", sizeof("/"));
 	}
 
 	LOG_INF("Hostname: %s, Port: %d, URI: %s", hostname, *port, uri);
 
-	return ret;
+	return 0;
 }
