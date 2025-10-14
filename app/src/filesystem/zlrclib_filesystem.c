@@ -45,10 +45,8 @@ static struct fs_mount_t lfs_mnt = {
 };
 #endif
 
-#define MAX_PATH_LEN 128
-
 /* Maintenance guarantees this begins with '/' and is NUL-terminated. */
-static uint8_t cwd[MAX_PATH_LEN] = "/";
+static uint8_t cwd[CONFIG_ZLRCLIB_FS_PATH_LEN] = "/";
 
 static int create_abs_path(const uint8_t *file_name, uint8_t *path)
 {
@@ -58,14 +56,15 @@ static int create_abs_path(const uint8_t *file_name, uint8_t *path)
 		return -EINVAL;
 	}
 
-	ret = snprintf(path, MAX_PATH_LEN, "%s/%s", cwd, file_name);
+	ret = snprintf(path, CONFIG_ZLRCLIB_FS_PATH_LEN, "%s/%s", cwd, file_name);
 
 	if (ret < 0) {
 		return ret;
 	}
 
-	else if (ret >= MAX_PATH_LEN) {
-		fprintf(stderr, "Error: Path exceeds maximum length (%d bytes)\n", MAX_PATH_LEN);
+	else if (ret >= CONFIG_ZLRCLIB_FS_PATH_LEN) {
+		fprintf(stderr, "Error: Path exceeds maximum length (%d bytes)\n",
+			CONFIG_ZLRCLIB_FS_PATH_LEN);
 		return -ENAMETOOLONG;
 	}
 
@@ -172,7 +171,7 @@ int zlrclib_pwd(uint8_t *path)
 int zlrclib_rm(const uint8_t *file_name)
 {
 	int ret;
-	uint8_t path[MAX_PATH_LEN];
+	uint8_t path[CONFIG_ZLRCLIB_FS_PATH_LEN];
 
 	if (!file_name) {
 		LOG_ERR("rm: Invalid argument");
@@ -194,7 +193,7 @@ int zlrclib_fwrite(const uint8_t *file_name, uint8_t *buf, size_t buf_len, uint1
 {
 	int ret;
 	struct fs_file_t file;
-	uint8_t path[MAX_PATH_LEN];
+	uint8_t path[CONFIG_ZLRCLIB_FS_PATH_LEN];
 
 	if (!file_name || !buf || buf_len < 1) {
 		LOG_ERR("fwrite: Invalid argument");
@@ -234,7 +233,7 @@ int zlrclib_fread(const uint8_t *file_name, uint8_t *buf, size_t buf_len, uint16
 {
 	int ret;
 	struct fs_file_t file;
-	uint8_t path[MAX_PATH_LEN];
+	uint8_t path[CONFIG_ZLRCLIB_FS_PATH_LEN];
 
 	if (!file_name || !buf || buf_len < 1) {
 		LOG_ERR("fread: Invalid argument");

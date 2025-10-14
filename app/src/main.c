@@ -13,8 +13,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);
 
-#define SYNCED_LYRICS "syncedLyrics"
-
 #define ARTIST "Taylor+Swift"
 #define TRACK  "New+Romantics"
 
@@ -24,10 +22,13 @@ const uint8_t *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_na
 const uint8_t *url = "https://google.com";
 #endif
 
+#define SYNCED_LYRICS "syncedLyrics"
+
+static bool is_synced_lyrics = false;
+
 static int resp_cb(struct http_response *rsp, enum http_final_call final_data, void *user_data)
 {
 	struct requests_ctx *ctx = (struct requests_ctx *)user_data;
-	static bool is_synced_lyrics = false;
 	char *pos = NULL;
 
 	if (!is_synced_lyrics) {
@@ -72,6 +73,7 @@ int main(void)
 		}
 
 		zlrclib_rm(SYNCED_LYRICS);
+		is_synced_lyrics = false;
 
 		k_msleep(60 * MSEC_PER_SEC);
 	}

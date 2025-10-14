@@ -3,7 +3,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib_tracks);
 
-void zlrclib_track_info(const struct zlrclib_track *track)
+void zlrclib_track_info(struct zlrclib_track *track)
 {
 
 	if (!track) {
