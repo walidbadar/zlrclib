@@ -25,10 +25,9 @@ const uint8_t *url = "https://google.com";
 static int resp_cb(struct http_response *rsp, enum http_final_call final_data, void *user_data)
 {
 	struct requests_ctx *ctx = (struct requests_ctx *)user_data;
-	ctx->recv_buf_len = rsp->body_frag_len;
 
-	zlrclib_fwrite("track", rsp->body_frag_start, rsp->body_frag_len);
-	LOG_HEXDUMP_INF(rsp->body_frag_start, rsp->body_frag_len, "WRITE BUFFER");
+	zlrclib_fwrite("track", rsp->body_frag_start, rsp->body_frag_len, ctx->recv_buf_len);
+	ctx->recv_buf_len += rsp->body_frag_len;
 
 	return 0;
 }
@@ -50,8 +49,15 @@ int main(void)
 			LOG_ERR("Requests GET failed: %d", ret);
 		}
 
-		zlrclib_fread("track", ctx.recv_buf, ctx.recv_buf_len);
-		LOG_HEXDUMP_INF(ctx.recv_buf, ctx.recv_buf_len, "READ BUFFER");
+		uint8_t read_cycle = ctx.recv_buf_len / CONFIG_NET_IPV4_MTU;
+		LOG_INF("read_cycle: %d", read_cycle);
+
+		for (int i = 0; i <= read_cycle; i++) {
+			zlrclib_fread("track", ctx.recv_buf, CONFIG_NET_IPV4_MTU, i * CONFIG_NET_IPV4_MTU);
+			printk("%.*s\n\n", CONFIG_NET_IPV4_MTU, ctx.recv_buf);
+		}
+
+		zlrclib_rm("track");
 
 		k_msleep(60 * MSEC_PER_SEC);
 	}

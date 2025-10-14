@@ -169,7 +169,28 @@ int zlrclib_pwd(uint8_t *path)
 	return 0;
 }
 
-int zlrclib_fwrite(const uint8_t *file_name, uint8_t *buf, size_t buf_len)
+int zlrclib_rm(const uint8_t *file_name)
+{
+	int ret;
+	uint8_t path[MAX_PATH_LEN];
+
+	if (!file_name) {
+		LOG_ERR("rm: Invalid argument");
+		return -EINVAL;
+	}
+
+	create_abs_path(file_name, path);
+
+	ret = fs_unlink(path);
+	if (ret != 0) {
+		LOG_ERR("Failed to remove %s (%d)", path, ret);
+		ret = -EIO;
+	}
+
+	return ret;
+}
+
+int zlrclib_fwrite(const uint8_t *file_name, uint8_t *buf, size_t buf_len, uint16_t pos)
 {
 	int ret;
 	struct fs_file_t file;
@@ -191,6 +212,12 @@ int zlrclib_fwrite(const uint8_t *file_name, uint8_t *buf, size_t buf_len)
 		return ret;
 	}
 
+	ret = fs_seek(&file, pos, FS_SEEK_SET);
+	if (ret < 0) {
+		LOG_ERR("Failed to seek %s: (%d)", path, ret);
+		return ret;
+	}
+
 	ret = fs_write(&file, buf, buf_len);
 	if (ret < 0) {
 		LOG_ERR("Failed to write file: %s (%d)", path, ret);
@@ -203,7 +230,7 @@ int zlrclib_fwrite(const uint8_t *file_name, uint8_t *buf, size_t buf_len)
 	return ret;
 }
 
-int zlrclib_fread(const uint8_t *file_name, uint8_t *buf, size_t buf_len)
+int zlrclib_fread(const uint8_t *file_name, uint8_t *buf, size_t buf_len, uint16_t pos)
 {
 	int ret;
 	struct fs_file_t file;
@@ -224,6 +251,12 @@ int zlrclib_fread(const uint8_t *file_name, uint8_t *buf, size_t buf_len)
 		return ret;
 	}
 
+	ret = fs_seek(&file, pos, FS_SEEK_SET);
+	if (ret < 0) {
+		LOG_ERR("Failed to seek %s: (%d)", path, ret);
+		return ret;
+	}
+
 	ret = fs_read(&file, buf, buf_len);
 	if (ret < 0) {
 		LOG_ERR("Failed to read file: %s (%d)", path, ret);
@@ -233,7 +266,7 @@ int zlrclib_fread(const uint8_t *file_name, uint8_t *buf, size_t buf_len)
 
 	buf[ret] = '\0';
 
-	LOG_INF("Read %d bytes from %s", ret, path);
+	// LOG_INF("Read %d bytes from %s", ret, path);
 
 	fs_close(&file);
 
