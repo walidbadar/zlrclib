@@ -147,7 +147,7 @@ int zlrclib_ls(uint8_t *path)
 		}
 
 		name_end = (entry.type == FS_DIR_ENTRY_DIR) ? "/" : "";
-		LOG_INF("%s%s", entry.name, name_end);
+		LOG_DBG("%s%s", entry.name, name_end);
 	}
 
 	fs_closedir(&dir);
@@ -222,7 +222,7 @@ int zlrclib_fwrite(const uint8_t *file_name, uint8_t *buf, size_t buf_len, uint1
 	if (ret < 0) {
 		LOG_ERR("Failed to write file: %s (%d)", path, ret);
 	} else {
-		LOG_INF("Wrote %d bytes to %s", ret, path);
+		LOG_DBG("Wrote %d bytes to %s", ret, path);
 	}
 
 	fs_close(&file);
@@ -266,7 +266,7 @@ int zlrclib_fread(const uint8_t *file_name, uint8_t *buf, size_t buf_len, uint16
 
 	buf[ret] = '\0';
 
-	// LOG_INF("Read %d bytes from %s", ret, path);
+	LOG_DBG("Read %d bytes from %s", ret, path);
 
 	fs_close(&file);
 

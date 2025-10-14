@@ -1,5 +1,26 @@
 #include <app/zlrclib.h>
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(zlrclib_tracks);
+
+void zlrclib_track_info(const struct zlrclib_track *track)
+{
+
+	if (!track) {
+		LOG_ERR("Track info is NULL.");
+		return;
+	}
+
+	LOG_INF("ID: %u", track->id);
+	LOG_INF("Name: %s", track->name);
+	LOG_INF("Track Name: %s", track->track_name);
+	LOG_INF("Artist Name: %s", track->artist_name);
+	LOG_INF("Album Name: %s", track->album_name);
+	LOG_INF("Instrumental: %s", track->instrumental ? "Yes" : "No");
+	LOG_INF("Plain Lyrics: %s", track->plain_lyrics);
+	LOG_INF("Synced Lyrics: %s", track->synced_lyrics);
+}
+
 uint8_t track1[] = "{"
 		   "\"id\": 479074,"
 		   "\"name\": \"You Suffer\","

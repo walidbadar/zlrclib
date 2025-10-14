@@ -13,8 +13,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);
 
-#define ARTIST "benson+boone"
-#define TRACK  "mystical+magical"
+#define ARTIST "Taylor+Swift"
+#define TRACK  "New+Romantics"
 
 #if defined(CONFIG_NET_SOCKETS_SOCKOPT_TLS)
 const uint8_t *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_name=" TRACK;
@@ -49,12 +49,10 @@ int main(void)
 			LOG_ERR("Requests GET failed: %d", ret);
 		}
 
-		uint8_t read_cycle = ctx.recv_buf_len / CONFIG_NET_IPV4_MTU;
-		LOG_INF("read_cycle: %d", read_cycle);
-
-		for (int i = 0; i <= read_cycle; i++) {
-			zlrclib_fread("track", ctx.recv_buf, CONFIG_NET_IPV4_MTU, i * CONFIG_NET_IPV4_MTU);
-			printk("%.*s\n\n", CONFIG_NET_IPV4_MTU, ctx.recv_buf);
+		for (int i = 0; i <= ctx.recv_buf_len / CONFIG_NET_IPV4_MTU; i++) {
+			zlrclib_fread("track", ctx.recv_buf, CONFIG_NET_IPV4_MTU,
+				      i * CONFIG_NET_IPV4_MTU);
+			printk("%.*s\n", CONFIG_NET_IPV4_MTU, ctx.recv_buf);
 		}
 
 		zlrclib_rm("track");
