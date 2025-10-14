@@ -13,6 +13,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);
 
+#define SYNCED_LYRICS "syncedLyrics"
+
 #define ARTIST "Taylor+Swift"
 #define TRACK  "New+Romantics"
 
@@ -25,9 +27,23 @@ const uint8_t *url = "https://google.com";
 static int resp_cb(struct http_response *rsp, enum http_final_call final_data, void *user_data)
 {
 	struct requests_ctx *ctx = (struct requests_ctx *)user_data;
+	static bool is_synced_lyrics = false;
+	char *pos = NULL;
 
-	zlrclib_fwrite("track", rsp->body_frag_start, rsp->body_frag_len, ctx->recv_buf_len);
-	ctx->recv_buf_len += rsp->body_frag_len;
+	if (!is_synced_lyrics) {
+		pos = strstr(rsp->body_frag_start, SYNCED_LYRICS);
+	}
+
+	if (pos) {
+		rsp->body_frag_start = pos;
+		is_synced_lyrics = true;
+	}
+
+	if (is_synced_lyrics) {
+		zlrclib_fwrite(SYNCED_LYRICS, rsp->body_frag_start, rsp->body_frag_len,
+			       ctx->recv_buf_len);
+		ctx->recv_buf_len += rsp->body_frag_len;
+	}
 
 	return 0;
 }
@@ -50,12 +66,12 @@ int main(void)
 		}
 
 		for (int i = 0; i <= ctx.recv_buf_len / CONFIG_NET_IPV4_MTU; i++) {
-			zlrclib_fread("track", ctx.recv_buf, CONFIG_NET_IPV4_MTU,
+			zlrclib_fread(SYNCED_LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU,
 				      i * CONFIG_NET_IPV4_MTU);
 			printk("%.*s\n", CONFIG_NET_IPV4_MTU, ctx.recv_buf);
 		}
 
-		zlrclib_rm("track");
+		zlrclib_rm(SYNCED_LYRICS);
 
 		k_msleep(60 * MSEC_PER_SEC);
 	}
