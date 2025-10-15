@@ -37,7 +37,7 @@ static int zlrclib_display(void)
 	lv_label_set_text(display_title, "ZLRCLIB APP");
 
 	lyrics = lv_label_create(lv_scr_act());
-	lv_obj_align(lyrics, LV_ALIGN_TOP_LEFT, 0, 14);
+	lv_obj_align(lyrics, LV_ALIGN_TOP_LEFT, 0, 24);
 
 	zlrclib_display_lyrics("");
 
