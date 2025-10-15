@@ -7,6 +7,7 @@ find_package(Python REQUIRED COMPONENTS Interpreter)
 
 project(zlrclib)
 
+add_subdirectory(src/display)
 add_subdirectory(src/filesystem)
 add_subdirectory(src/http_server)
 
