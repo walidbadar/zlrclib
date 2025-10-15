@@ -57,7 +57,7 @@ static int resp_cb(struct http_response *rsp, enum http_final_call final_data, v
 int main(void)
 {
 	int ret;
-	LOG_INF("Starting zlrclib app");
+	LOG_INF("ZLRCLIB APP");
 
 	zlrclib_rm(LYRICS);
 
@@ -90,8 +90,8 @@ int main(void)
 		zlrclib_display_lyrics(ctx.recv_buf);
 		pos += len;
 		
-		printk("%s\n", ctx.recv_buf);
-		printk("Postion: %d\n", pos);
+		LOG_INF("%s", ctx.recv_buf);
+		LOG_INF("Read postion: %d", pos);
 
 		ret = zlrclib_fread(LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU, pos);
 		if (ret < 0) {
