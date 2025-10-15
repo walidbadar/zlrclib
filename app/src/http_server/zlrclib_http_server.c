@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <zephyr/init.h>
 #include <zephyr/net/http/server.h>
 #include <zephyr/net/http/service.h>
 #include <zephyr/data/json.h>
@@ -147,3 +148,18 @@ HTTP_RESOURCE_DEFINE(main_js_gz_resource, test_http_service, "/main.js",
 		     &main_js_gz_resource_detail);
 
 HTTP_RESOURCE_DEFINE(connect_resource, test_http_service, "/connect", &connect_resource_detail);
+
+static int zlrclib_http_server(void)
+{
+	int ret;
+
+	ret = http_server_start();
+	if (ret) {
+		LOG_ERR("Failed to start HTTP server (%d)", ret);
+		return ret;
+	}
+
+	return 0;
+}
+
+SYS_INIT(zlrclib_http_server, APPLICATION, 95);

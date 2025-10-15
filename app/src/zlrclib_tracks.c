@@ -5,7 +5,6 @@ LOG_MODULE_REGISTER(zlrclib_tracks);
 
 void zlrclib_track_info(struct zlrclib_track *track)
 {
-
 	if (!track) {
 		LOG_ERR("Track info is NULL.");
 		return;

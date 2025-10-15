@@ -126,7 +126,7 @@ int zlrclib_ls(uint8_t *path)
 
 	ret = fs_opendir(&dir, path);
 	if (ret != 0) {
-		LOG_ERR("Unable to open %s (ret %d)", path, ret);
+		LOG_ERR("Unable to open file: %s (%d)", path, ret);
 		return -EIO;
 	}
 
@@ -182,7 +182,7 @@ int zlrclib_rm(const uint8_t *file_name)
 
 	ret = fs_unlink(path);
 	if (ret != 0) {
-		LOG_ERR("Failed to remove %s (%d)", path, ret);
+		LOG_ERR("Failed to remove file: %s (%d)", path, ret);
 		ret = -EIO;
 	}
 
@@ -213,7 +213,7 @@ int zlrclib_fwrite(const uint8_t *file_name, uint8_t *buf, size_t buf_len, uint1
 
 	ret = fs_seek(&file, pos, FS_SEEK_SET);
 	if (ret < 0) {
-		LOG_ERR("Failed to seek %s: (%d)", path, ret);
+		LOG_ERR("Failed to seek file: %s (%d)", path, ret);
 		return ret;
 	}
 

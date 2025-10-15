@@ -4,9 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <lvgl.h>
+#include <zephyr/init.h>
 #include <zephyr/drivers/display.h>
 #include <app/zlrclib_display.h>
+#include <lvgl.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib_display);
@@ -29,7 +30,7 @@ static int zlrclib_display(void)
 		return -ENODEV;
 	}
 
-   display_blanking_off(ddev);
+	display_blanking_off(ddev);
 
 	display_title = lv_label_create(lv_scr_act());
 	lv_obj_align(display_title, LV_ALIGN_TOP_MID, 0, 0);
@@ -37,7 +38,8 @@ static int zlrclib_display(void)
 
 	lyrics = lv_label_create(lv_scr_act());
 	lv_obj_align(lyrics, LV_ALIGN_TOP_LEFT, 0, 14);
-   lv_label_set_text(lyrics, "");
+
+	zlrclib_display_lyrics("");
 
 	return 0;
 }

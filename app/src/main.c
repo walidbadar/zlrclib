@@ -5,10 +5,9 @@
  */
 
 #include <app/zlrclib.h>
+#include <app/zlrclib_display.h>
 #include <app/zlrclib_filesystem.h>
-#include <app/lib/wifi_conn_mgr.h>
 #include <app/lib/requests.h>
-#include <zephyr/net/http/server.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);
@@ -54,10 +53,6 @@ int main(void)
 	int ret;
 	LOG_INF("Starting zlrclib app");
 
-	if (IS_ENABLED(CONFIG_HTTP_SERVER)) {
-		http_server_start();
-	}
-
 	struct requests_ctx ctx;
 
 	while (1) {
@@ -69,7 +64,11 @@ int main(void)
 		for (int i = 0; i <= ctx.recv_buf_len / CONFIG_NET_IPV4_MTU; i++) {
 			zlrclib_fread(SYNCED_LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU,
 				      i * CONFIG_NET_IPV4_MTU);
+
+			zlrclib_display_lyrics(ctx.recv_buf);
 			printk("%.*s\n", CONFIG_NET_IPV4_MTU, ctx.recv_buf);
+
+			k_msleep(1 * MSEC_PER_SEC);
 		}
 
 		zlrclib_rm(SYNCED_LYRICS);

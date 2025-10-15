@@ -7,9 +7,9 @@ find_package(Python REQUIRED COMPONENTS Interpreter)
 
 project(zlrclib)
 
-add_subdirectory(src/display)
-add_subdirectory(src/filesystem)
-add_subdirectory(src/http_server)
+add_subdirectory_ifdef(CONFIG_DISPLAY src/display)
+add_subdirectory_ifdef(CONFIG_FILE_SYSTEM src/filesystem)
+add_subdirectory_ifdef(CONFIG_HTTP_SERVER src/http_server)
 
 set(APP_SOURCES 
   src/main.c
