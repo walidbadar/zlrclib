@@ -7,7 +7,6 @@
 #ifndef ZLRCLIB_H_
 #define ZLRCLIB_H_
 
-#include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>

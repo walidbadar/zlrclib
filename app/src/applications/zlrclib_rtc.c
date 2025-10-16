@@ -15,7 +15,7 @@ LOG_MODULE_REGISTER(zlrclib_rtc, LOG_LEVEL_DBG);
 
 #define RTC_BUF_LEN 32
 
-static const struct device *const rtc = DEVICE_DT_GET(DT_ALIAS(rtc));
+static const struct device *rtc;
 
 static uint8_t *zlrclib_format_time(const struct rtc_time *rtc_tm)
 {
@@ -95,6 +95,7 @@ int zlrclib_rtc_get_time(uint8_t *buf, size_t len)
 
 static int zlrclib_rtc(void)
 {
+    rtc = DEVICE_DT_GET(DT_ALIAS(rtc));
 	if (!device_is_ready(rtc)) {
 		LOG_ERR("RTC device is not ready");
 		return -ENODEV;

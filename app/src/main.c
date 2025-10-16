@@ -13,7 +13,7 @@
 LOG_MODULE_REGISTER(zlrclib);
 
 #define ARTIST "Taylor+Swift"
-#define TRACK  "Opalite"
+#define TRACK  "New+Romantics"
 
 #if defined(CONFIG_NET_SOCKETS_SOCKOPT_TLS)
 const uint8_t *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_name=" TRACK;
@@ -98,7 +98,7 @@ int main(void)
 			break;
 		}
 
-		k_msleep(5 * MSEC_PER_SEC);
+		k_msleep(3 * MSEC_PER_SEC);
 	}
 
 	return 0;
