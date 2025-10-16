@@ -22,6 +22,8 @@ Built on top of the Zephyr RTOS, zlrclib demonstrates how to integrate networkin
 
 zlrclib is licensed under the Apache-2.0 license. The documentation is licensed under the CC BY 4.0 license.
 
+![ZLRCLIB DEMO](doc/img/demo.gif)
+
 [app_dev]: https://docs.zephyrproject.org/latest/develop/application/index.html
 [workspace_app]: https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-workspace-app
 [modules]: https://docs.zephyrproject.org/latest/develop/modules.html

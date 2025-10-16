@@ -5,6 +5,7 @@
  */
 
 #include <app/zlrclib.h>
+#include <app/zlrclib_applications.h>
 #include <app/zlrclib_display.h>
 #include <app/zlrclib_filesystem.h>
 #include <app/lib/requests.h>
@@ -12,8 +13,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);
 
-#define ARTIST "Taylor+Swift"
-#define TRACK  "New+Romantics"
+#define ARTIST "Black+Eyed+Peas"
+#define TRACK  "Where+is+the+love"
 
 #if defined(CONFIG_NET_SOCKETS_SOCKOPT_TLS)
 const uint8_t *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_name=" TRACK;
@@ -51,6 +52,8 @@ static int resp_cb(struct http_response *rsp, enum http_final_call final_data, v
 		ctx->recv_buf_len += rsp->body_frag_len;
 	}
 
+	memset(rsp->recv_buf, 0, rsp->recv_buf_len);
+
 	return 0;
 }
 
@@ -72,7 +75,10 @@ int main(void)
 	uint8_t *pos_start;
 	uint8_t *pos_end;
 
-	zlrclib_fread(LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU, 0);
+	ret = zlrclib_fread(LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU, 0);
+	if (ret < 0) {
+		return ret;
+	}
 
 	while(1) {		
 		pos_start = strstr(ctx.recv_buf, LYRICS_POS_START);

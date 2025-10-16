@@ -11,6 +11,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <zephyr/drivers/rtc.h>
+
 int zlrclib_rtc_set_time(struct rtc_time *tm, bool boot);
 int zlrclib_rtc_get_time(uint8_t *buf, size_t len);
 

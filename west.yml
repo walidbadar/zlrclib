@@ -21,6 +21,5 @@ manifest:
           - mbedtls
           - lvgl
           - littlefs
-          - cmsis_6
-          - hal_stm32
+          - net-tools
           - hal_espressif
