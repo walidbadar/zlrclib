@@ -13,8 +13,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);
 
-#define ARTIST "Black+Eyed+Peas"
-#define TRACK  "Where+is+the+love"
+#define ARTIST "Seafret"
+#define TRACK  "Atlantis"
 
 #if defined(CONFIG_NET_SOCKETS_SOCKOPT_TLS)
 const uint8_t *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_name=" TRACK;

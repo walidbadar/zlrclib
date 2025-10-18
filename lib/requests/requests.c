@@ -37,7 +37,7 @@ int requests_get(struct requests_ctx *ctx, http_response_cb_t cb, const uint8_t 
 {
 	int ret;
 
-	if (!ctx && !url) {
+	if (!ctx || !url) {
 		LOG_ERR("Invalid argument");
 		return -EINVAL;
 	}

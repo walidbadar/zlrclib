@@ -29,6 +29,12 @@ config REQUESTS_HTTPS_PORT
 	help
 	  The default port used for HTTPS requests.
 
+config REQUESTS_SSL_CERTS
+	string "SSL Certificate"
+	default "google.der.inc"
+	help
+	  The default SSL Certificate used for requests.
+
 config REQUESTS_SHELL
 	bool "Enable shell commands for Requests library"
 	depends on SHELL

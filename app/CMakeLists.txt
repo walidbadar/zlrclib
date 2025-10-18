@@ -15,7 +15,6 @@ add_subdirectory_ifdef(CONFIG_HTTP_SERVER src/http_server)
 set(APP_SOURCES 
   src/main.c
   src/zlrclib_parser.c
-  src/zlrclib_tracks.c
 )
 
 target_sources(app PRIVATE ${APP_SOURCES})

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#ifndef __REQUESTS_CERTS_INTERNAL_H_
-#define __REQUESTS_CERTS_INTERNAL_H_
+#ifndef __REQUESTS_CERTS_H_
+#define __REQUESTS_CERTS_H_
 
 #include <stdint.h>
 #include <zephyr/net/tls_credentials.h>
@@ -14,11 +14,11 @@
 
 #if defined(CONFIG_NET_SOCKETS_SOCKOPT_TLS)
 static const unsigned char ca_certificate[] = {
-#include "lrclib.der.inc"
+#include CONFIG_REQUESTS_SSL_CERTS
 };
 #else
 #define TLS_CREDENTIAL_CA_CERTIFICATE 1
 static const unsigned char ca_certificate[] = {};
 #endif
 
-#endif /* __REQUESTS_CERTS_INTERNAL_H_ */
+#endif /* __REQUESTS_CERTS_H_ */

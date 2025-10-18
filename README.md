@@ -14,7 +14,7 @@
 ## Overview
 
 zlrclib is an open source firmware for requesting lyrics from [lrclib.net](https://lrclib.net) 
-and displaying them on OLED displays.
+and displaying them on tiny displays.
 
 The firmware implements a lightweight client for the lrclib.net API, making it possible to fetch time-synced or unsynced lyrics directly from the internet. Lyrics can then be rendered on small displays that are commonly used in embedded projects.
 
@@ -101,3 +101,11 @@ Once you have built the application, run the following command:
 ```shell
 west flash
 ```
+
+### Recommended Disclaimer
+zlrclib is an independent open-source project and is not affiliated with, endorsed by, or associated with lrclib.net.
+
+This firmware simply communicates with the LRCLIB public API to fetch lyrics at runtime. It does not distribute, store, or bundle lyrics.
+
+All song lyrics remain the copyrighted property of their respective owners.
+Users are responsible for ensuring their use of lyrics complies with applicable copyright laws and the terms of lrclib.net.
