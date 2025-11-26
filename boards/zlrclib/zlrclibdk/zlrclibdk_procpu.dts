@@ -24,6 +24,7 @@
 		zephyr,flash = &flash0;
 		zephyr,code-partition = &slot0_partition;
 		zephyr,bt-hci = &esp32_bt_hci;
+		zephyr,display = &ssd1306_128x64;
 	};
 
 	leds {
@@ -42,11 +43,13 @@
 			label = "BOOT Button";
 			zephyr,code = <INPUT_KEY_0>;
 		};
+
 		button1: button_1 {
 			gpios = <&gpio0 25 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 			label = "User Button 1";
 			zephyr,code = <INPUT_KEY_1>;
 		};
+
 		button2: button_2 {
 			gpios = <&gpio1 1 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 			label = "User Button 2";
@@ -116,6 +119,20 @@
 	scl-gpios = <&gpio0 22 GPIO_OPEN_DRAIN>;
 	pinctrl-0 = <&i2c0_default>;
 	pinctrl-names = "default";
+
+	ssd1306_128x64: ssd1306@3c {
+		compatible = "solomon,ssd1306fb";
+		reg = <0x3c>;
+		width = <128>;
+		height = <64>;
+		segment-offset = <0>;
+		page-offset = <0>;
+		display-offset = <0>;
+		multiplex-ratio = <63>;
+		segment-remap;
+		com-invdir;
+		prechargep = <0x22>;
+	};
 };
 
 &mbox0 {
