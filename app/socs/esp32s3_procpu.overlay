@@ -1,0 +1,6 @@
+/ {
+	wlan1: wlan1 {
+		compatible = "espressif,esp32-wifi";
+		status = "okay";
+	};
+};
