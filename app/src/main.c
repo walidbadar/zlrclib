@@ -9,6 +9,7 @@
 #include <zlrclib_display.h>
 #include <zlrclib_filesystem.h>
 #include <zlrclib/net/lib/requests.h>
+#include <zlrclib/net/lib/wifi_conn_mgr.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);
@@ -61,6 +62,19 @@ int main(void)
 {
 	int ret;
 	LOG_INF("ZLRCLIB APP");
+
+#if defined(CONFIG_WIFI)
+	struct net_if *iface = net_if_get_wifi_sta();
+	if (iface == NULL) {
+		LOG_ERR("Wifi interface not found");
+		return -ENODEV;
+	}
+
+	ret = wifi_connect(iface, CONFIG_WIFI_STATIC_SSID, CONFIG_WIFI_STATIC_PSK);
+	if (ret < 0) {
+		LOG_WRN("WiFi connect failed: %d", ret);
+	}
+#endif
 
 	zlrclib_rm(LYRICS);
 

@@ -253,11 +253,3 @@ static void wifi_conn_handler(struct k_work *work)
 
 	wifi_connect(iface, CONFIG_WIFI_STATIC_SSID, CONFIG_WIFI_STATIC_PSK);
 }
-
-static int wifi_conn_mgr(void)
-{
-	k_work_schedule(&wifi_conn_dwork, K_NO_WAIT);
-	return 0;
-}
-
-SYS_INIT(wifi_conn_mgr, APPLICATION, CONFIG_WIFI_INIT_PRIORITY);
