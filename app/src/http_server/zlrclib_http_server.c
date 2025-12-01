@@ -12,7 +12,7 @@
 #include <zephyr/net/http/server.h>
 #include <zephyr/net/http/service.h>
 #include <zephyr/data/json.h>
-#include <app/lib/wifi_conn_mgr.h>
+#include <zlrclib/net/lib/wifi_conn_mgr.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(http_service, LOG_LEVEL_DBG);

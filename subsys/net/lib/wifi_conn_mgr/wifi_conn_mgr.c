@@ -8,7 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/led.h>
 #include <zephyr/net/dhcpv4_server.h>
-#include <app/lib/wifi_conn_mgr.h>
+#include <zlrclib/net/lib/wifi_conn_mgr.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(wifi_conn_mgr, CONFIG_WIFI_CONNECTION_MANAGER_LOG_LEVEL);

@@ -1,8 +1,5 @@
-#
 # Copyright (c) 2025 Muhammad Waleed Badar
-#
 # SPDX-License-Identifier: Apache-2.0
-#
 
 menuconfig WIFI_CONNECTION_MANAGER
     bool "Enable WiFi Connection Manager"
@@ -82,4 +79,3 @@ module-str = wifi_conn_mgr
 source "subsys/logging/Kconfig.template.log_config"
 
 endif  # WIFI_CONNECTION_MANAGER
-

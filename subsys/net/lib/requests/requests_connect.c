@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <app/lib/requests.h>
+#include <zlrclib/net/lib/requests.h>
 #include "requests_private.h"
 #include "requests_certs.h"
 

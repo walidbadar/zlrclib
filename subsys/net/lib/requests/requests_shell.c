@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
-#include <app/lib/requests.h>
+#include <zlrclib/net/lib/requests.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(requests_shell, CONFIG_REQUESTS_LOG_LEVEL);

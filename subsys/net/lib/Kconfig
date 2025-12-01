@@ -1,12 +1,5 @@
-#
 # Copyright (c) 2025 Muhammad Waleed Badar
-#
 # SPDX-License-Identifier: Apache-2.0
-#
-
-menu "Network Additional libraries"
 
 rsource "requests/Kconfig"
 rsource "wifi_conn_mgr/Kconfig"
-
-endmenu

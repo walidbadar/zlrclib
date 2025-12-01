@@ -6,7 +6,7 @@
 
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
-#include <app/lib/requests.h>
+#include <zlrclib/net/lib/requests.h>
 #include "requests_private.h"
 
 #include <zephyr/logging/log.h>

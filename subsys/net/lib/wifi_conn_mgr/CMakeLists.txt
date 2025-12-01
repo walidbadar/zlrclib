@@ -1,4 +1,4 @@
-# Copyright (c) 2025, Muhmmad Waleed Badar
+# Copyright (c) 2025 Muhammad Waleed Badar
 # SPDX-License-Identifier: Apache-2.0
 
 zephyr_library_named(wifi_conn_mgr)

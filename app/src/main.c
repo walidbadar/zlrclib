@@ -8,7 +8,7 @@
 #include <zlrclib_applications.h>
 #include <zlrclib_display.h>
 #include <zlrclib_filesystem.h>
-#include <app/lib/requests.h>
+#include <zlrclib/net/lib/requests.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);
