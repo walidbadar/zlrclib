@@ -148,17 +148,4 @@ HTTP_RESOURCE_DEFINE(main_js_gz_resource, test_http_service, "/main.js",
 
 HTTP_RESOURCE_DEFINE(connect_resource, test_http_service, "/connect", &connect_resource_detail);
 
-static int zlrclib_http_server(void)
-{
-	int ret;
-
-	ret = http_server_start();
-	if (ret) {
-		LOG_ERR("Failed to start HTTP server (%d)", ret);
-		return ret;
-	}
-
-	return 0;
-}
-
-SYS_INIT(zlrclib_http_server, APPLICATION, 95);
+SYS_INIT(http_server_start, APPLICATION, 95);
