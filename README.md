@@ -102,6 +102,24 @@ Once you have built the application, run the following command:
 west flash
 ```
 
+## zlrclib as a Zephyr Module
+
+The zlrclib firmware repository is a [Zephyr module](https://docs.zephyrproject.org/latest/develop/modules.html) 
+which allows for reuse of its components (i.e. the "requests" and "wifi_conn_mgr" implementation) outside of the
+zlrclib firmware application.
+
+To pull in zlrclib as a Zephyr module, either add it as a West project in the `west.yaml` file
+or pull it in by adding a submanifest file with the following content and run `west update`:
+
+```yaml
+manifest:
+  projects:
+    - name: zlrclib
+      url: https://github.com/walidbadar/zlrclib.git
+      revision: main
+      path: custom/zlrclib # adjust the path as needed
+```
+
 ### Recommended Disclaimer
 zlrclib is an independent open-source project and is not affiliated with, endorsed by, or associated with lrclib.net.
 
