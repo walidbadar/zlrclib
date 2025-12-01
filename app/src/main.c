@@ -60,8 +60,9 @@ static int resp_cb(struct http_response *rsp, enum http_final_call final_data, v
 
 int main(void)
 {
-	int ret;
+	int ret = 0;
 	LOG_INF("ZLRCLIB APP");
+	zlrclib_rm(LYRICS);
 
 #if defined(CONFIG_WIFI)
 	struct net_if *iface = net_if_get_wifi_sta();
@@ -76,12 +77,9 @@ int main(void)
 	}
 #endif
 
-	zlrclib_rm(LYRICS);
-
 	struct requests_ctx ctx;
-	ret = requests_get(&ctx, resp_cb, url);
-	if (ret < 0) {
-		LOG_ERR("Requests GET failed: %d", ret);
+	while (requests_get(&ctx, resp_cb, url) < 0) {
+		LOG_ERR("Requests GET failed");
 	}
 
 	uint16_t len = 0;
@@ -89,10 +87,7 @@ int main(void)
 	uint8_t *pos_start;
 	uint8_t *pos_end;
 
-	ret = zlrclib_fread(LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU, 0);
-	if (ret < 0) {
-		return ret;
-	}
+	zlrclib_fread(LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU, 0);
 
 	while(1) {		
 		pos_start = strstr(ctx.recv_buf, LYRICS_POS_START);
