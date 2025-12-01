@@ -11,21 +11,13 @@
 #include <stdint.h>
 #include <string.h>
 
-extern uint8_t track1[];
-extern uint8_t track2[];
-
-struct zlrclib_track {
+struct zlrclib_track_info {
 	uint32_t id;
-	uint8_t *name;
-	uint8_t *track_name;
-	uint8_t *artist_name;
-	uint8_t *album_name;
+	uint8_t name[32];
+	uint8_t track_name[32];
+	uint8_t artist_name[32];
+	uint8_t album_name[32];
 	bool instrumental;
-	uint8_t *plain_lyrics;
-	uint8_t *synced_lyrics;
 };
-
-void zlrclib_track_info(struct zlrclib_track *track);
-int zlrclib_track_parser(struct zlrclib_track *track, uint8_t *buf, size_t len);
 
 #endif /* ZLRCLIB_H_ */

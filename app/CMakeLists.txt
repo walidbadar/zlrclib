@@ -19,7 +19,6 @@ add_subdirectory_ifdef(CONFIG_HTTP_SERVER src/http_server)
 
 set(APP_SOURCES 
   src/main.c
-  src/zlrclib_parser.c
 )
 
 zephyr_include_directories(src)
