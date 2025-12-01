@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <app/zlrclib.h>
-#include <app/zlrclib_applications.h>
-#include <app/zlrclib_display.h>
-#include <app/zlrclib_filesystem.h>
+#include <zlrclib.h>
+#include <zlrclib_applications.h>
+#include <zlrclib_display.h>
+#include <zlrclib_filesystem.h>
 #include <app/lib/requests.h>
 
 #include <zephyr/logging/log.h>

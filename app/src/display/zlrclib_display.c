@@ -8,7 +8,7 @@
 #include <zephyr/drivers/display.h>
 #include <lvgl.h>
 
-#include <app/zlrclib_display.h>
+#include <zlrclib_display.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib_display);

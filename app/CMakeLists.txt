@@ -7,6 +7,11 @@ find_package(Python REQUIRED COMPONENTS Interpreter)
 
 project(zlrclib)
 
+include_directories(src/applications)
+include_directories(src/display)
+include_directories(src/filesystem)
+include_directories(src/http_server)
+
 add_subdirectory(src/applications)
 add_subdirectory_ifdef(CONFIG_DISPLAY src/display)
 add_subdirectory_ifdef(CONFIG_FILE_SYSTEM src/filesystem)
@@ -17,6 +22,7 @@ set(APP_SOURCES
   src/zlrclib_parser.c
 )
 
+zephyr_include_directories(src)
 target_sources(app PRIVATE ${APP_SOURCES})
 target_link_libraries(app PRIVATE zephyr_interface zephyr)
 

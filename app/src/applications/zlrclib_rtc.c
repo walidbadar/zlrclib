@@ -8,7 +8,7 @@
 #include <zephyr/sys/util.h>
 #include <time.h>
 
-#include <app/zlrclib_applications.h>
+#include <zlrclib_applications.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib_rtc, LOG_LEVEL_DBG);

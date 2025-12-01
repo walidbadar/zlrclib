@@ -9,7 +9,7 @@
 #include <zephyr/fs/littlefs.h>
 #include <zephyr/sd/sd_spec.h>
 
-#include <app/zlrclib_filesystem.h>
+#include <zlrclib_filesystem.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib_filesystem);
