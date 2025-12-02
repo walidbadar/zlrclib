@@ -13,6 +13,10 @@
 
 #include <lvgl.h>
 
-void zlrclib_display_lyrics(uint8_t *synced_lyrics);
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/display.h>
+
+int zlrclib_display_init(void);
+void zlrclib_display_lyrics(struct k_work *item);
 
 #endif /* ZLRCLIB_DISPLAY_H_ */
