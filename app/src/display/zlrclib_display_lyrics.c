@@ -87,7 +87,7 @@ void zlrclib_display_lyrics(struct k_work *item)
 
 		if(lyrics == NULL) {
 			lyrics = lv_label_create(lv_scr_act());
-			lv_obj_align(lyrics, LV_ALIGN_TOP_LEFT, 0, 24);
+			lv_obj_align(lyrics, LV_ALIGN_TOP_LEFT, 0, 16);
 			lv_obj_set_width(lyrics, 128);
 			lv_label_set_text(lyrics, "");
 		}
@@ -95,7 +95,6 @@ void zlrclib_display_lyrics(struct k_work *item)
 		lv_obj_fade_out(lyrics, 100, 0);
 		lv_obj_fade_in(lyrics, 100, 100);
 
-		lv_label_set_long_mode(lyrics, LV_LABEL_LONG_SCROLL_CIRCULAR);
 		lv_label_set_text(lyrics, ctx.recv_buf);
 
 		pos += len;
