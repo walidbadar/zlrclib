@@ -18,8 +18,8 @@ LOG_MODULE_REGISTER(zlrclib_display_lyrics);
 #define LYRICS_OFFSET 15
 #define VERSE_OFFSET 10
 
-#define ARTIST "Seafret"
-#define TRACK  "Atlantis"
+#define ARTIST "David+Kushner"
+#define TRACK  "Mr+Forgettable"
 
 const uint8_t *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_name=" TRACK;
 
@@ -75,7 +75,7 @@ void zlrclib_display_lyrics(struct k_work *item)
 		pos_end = strstr(ctx.recv_buf, LYRICS_POS_END);
 
 		if(pos_start && pos_end){			
-			len = strlen(pos_start) - strlen(pos_end) + 2;
+			len = strlen(pos_start) - strlen(pos_end);
 		}
 
 		ret = zlrclib_fread(LYRICS, ctx.recv_buf, len - VERSE_OFFSET, pos + VERSE_OFFSET);
@@ -87,8 +87,9 @@ void zlrclib_display_lyrics(struct k_work *item)
 
 		if(lyrics == NULL) {
 			lyrics = lv_label_create(lv_scr_act());
-			lv_obj_align(lyrics, LV_ALIGN_TOP_LEFT, 0, 16);
+			lv_obj_align(lyrics, LV_ALIGN_TOP_MID, 0, 0);
 			lv_obj_set_width(lyrics, 128);
+			lv_obj_set_style_text_align(lyrics, LV_TEXT_ALIGN_CENTER, 0);
 			lv_label_set_text(lyrics, "");
 		}
 
@@ -97,7 +98,7 @@ void zlrclib_display_lyrics(struct k_work *item)
 
 		lv_label_set_text(lyrics, ctx.recv_buf);
 
-		pos += len;
+		pos += len + 2;
 		LOG_INF("Read postion: %d", pos);
 
 		ret = zlrclib_fread(LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU, pos);
