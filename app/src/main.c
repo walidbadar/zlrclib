@@ -113,7 +113,8 @@ int main(void)
 			break;
 		}
 
-		k_msleep(3 * MSEC_PER_SEC);
+		lv_timer_handler();
+		k_msleep(5 * MSEC_PER_SEC);
 	}
 
 	return 0;

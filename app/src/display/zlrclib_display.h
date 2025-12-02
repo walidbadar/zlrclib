@@ -11,6 +11,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <lvgl.h>
+
 void zlrclib_display_lyrics(uint8_t *synced_lyrics);
 
 #endif /* ZLRCLIB_DISPLAY_H_ */
