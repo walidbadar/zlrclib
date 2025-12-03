@@ -18,5 +18,6 @@
 
 int zlrclib_display_init(void);
 void zlrclib_display_lyrics(struct k_work *item);
+void zlrclib_display_mgr(void);
 
 #endif /* ZLRCLIB_DISPLAY_H_ */
