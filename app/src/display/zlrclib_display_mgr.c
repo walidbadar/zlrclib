@@ -49,16 +49,10 @@ void zlrclib_display_mgr(void)
     lv_obj_t *screen = lv_scr_act();
     lv_obj_set_style_bg_color(screen, lv_color_white(), 0);
     
-    /* Header */
-    lv_obj_t *header = lv_label_create(screen);
-    lv_label_set_text(header, "Music Player");
-    lv_obj_set_style_text_color(header, lv_color_black(), 0);
-    lv_obj_align(header, LV_ALIGN_TOP_MID, 0, 10);
-    
     /* Song list container */
     lv_obj_t *list_container = lv_obj_create(screen);
-    lv_obj_set_size(list_container, LV_PCT(100), LV_PCT(100) - 40);
-    lv_obj_align(list_container, LV_ALIGN_TOP_MID, 0, 40);
+    lv_obj_set_size(list_container, LV_PCT(100), LV_PCT(100));
+    lv_obj_align(list_container, LV_ALIGN_TOP_MID, 0, 0);
     lv_obj_set_style_bg_color(list_container, lv_color_white(), 0);
     lv_obj_set_style_pad_all(list_container, 5, 0);
     lv_obj_set_style_border_width(list_container, 0, 0);
@@ -71,7 +65,7 @@ void zlrclib_display_mgr(void)
         song_indices[i] = i;
         
         lv_obj_t *btn = lv_btn_create(list_container);
-        lv_obj_set_size(btn, LV_PCT(100), LV_PCT(20));
+        lv_obj_set_size(btn, LV_PCT(100), LV_PCT(30));
         lv_obj_set_style_radius(btn, 0, 0);
         lv_obj_set_style_bg_color(btn, lv_color_white(), 0);
         lv_obj_set_style_bg_color(btn, lv_color_make(230, 230, 230), LV_STATE_PRESSED);
@@ -85,8 +79,10 @@ void zlrclib_display_mgr(void)
         lv_obj_t *label = lv_label_create(btn);
         char text[64];
         snprintf(text, sizeof(text), "%s - %s", songs[i].title, songs[i].artist);
-        lv_label_set_text(label, text);
-        lv_obj_set_style_text_color(label, lv_color_black(), 0);
         lv_obj_center(label);
+        lv_obj_set_width(label, DISPLAY_WIDTH);
+        lv_obj_set_style_text_color(label, lv_color_black(), 0);
+        lv_label_set_long_mode(label, LV_LABEL_LONG_SCROLL_CIRCULAR);
+        lv_label_set_text(label, text);
     }
 }

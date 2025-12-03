@@ -16,6 +16,10 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/display.h>
 
+#define DISPLAY_NODE DT_CHOSEN(zephyr_display)
+#define DISPLAY_WIDTH DT_PROP(DISPLAY_NODE, width)
+#define DISPLAY_HEIGHT DT_PROP(DISPLAY_NODE, height)
+
 int zlrclib_display_init(void);
 void zlrclib_display_lyrics(struct k_work *item);
 void zlrclib_display_mgr(void);

@@ -21,7 +21,7 @@ int zlrclib_display_init(void)
 
 	lv_obj_t *display_title = lv_label_create(lv_scr_act());
 	lv_obj_align(display_title, LV_ALIGN_TOP_MID, 0, 0);
-	lv_obj_set_width(display_title, 128);
+	lv_obj_set_width(display_title, DISPLAY_WIDTH);
 	lv_obj_set_style_text_align(display_title, LV_TEXT_ALIGN_CENTER, 0);
 	lv_label_set_text(display_title, "ZLRCLIB APP: Powered by Zephyr RTOS");
 	lv_obj_fade_out(display_title, 500, 3 * MSEC_PER_SEC);
