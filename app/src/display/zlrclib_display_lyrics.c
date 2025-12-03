@@ -13,14 +13,15 @@ LOG_MODULE_REGISTER(zlrclib_display_lyrics);
 
 #define LYRICS_POS_START "["
 #define LYRICS_POS_END "\\n"
+#define LYRICS_END " \"}"
 
 #define LYRICS "syncedLyrics"
 #define LYRICS_OFFSET 15
 #define VERSE_OFFSET 10
+#define VERSE_DELAY 5
 
 #define ARTIST "David+Kushner"
 #define TRACK  "Mr+Forgettable"
-
 const uint8_t *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_name=" TRACK;
 
 static lv_obj_t *lyrics;
@@ -85,6 +86,11 @@ void zlrclib_display_lyrics(struct k_work *item)
 
 		LOG_INF("%s", ctx.recv_buf);
 
+		ret = memcmp(ctx.recv_buf, LYRICS_END, sizeof(LYRICS_END));
+		if(!ret) {
+			break;
+		}
+
 		if(lyrics == NULL) {
 			lyrics = lv_label_create(lv_scr_act());
 			lv_obj_align(lyrics, LV_ALIGN_TOP_MID, 0, 0);
@@ -106,6 +112,6 @@ void zlrclib_display_lyrics(struct k_work *item)
 			break;
 		}
 
-		k_msleep(5 * MSEC_PER_SEC);
+		k_msleep(VERSE_DELAY * MSEC_PER_SEC);
 	}
 }
