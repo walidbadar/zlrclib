@@ -23,6 +23,7 @@
 
 int zlrclib_display_init(void);
 void zlrclib_display_lyrics(struct k_work *item);
-void zlrclib_display_mgr(void);
+void zlrclib_display_songs(void);
+void zlrclib_menu_create(void);
 
 #endif /* ZLRCLIB_DISPLAY_H_ */
