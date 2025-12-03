@@ -4,23 +4,64 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
- /delete-node/ &storage_partition;
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/lvgl/lvgl.h>
 
- &flash0 {
-     partitions {
-         compatible = "fixed-partitions";
-         #address-cells = <1>;
-         #size-cells = <1>;
- 
-         storage_partition: partition@f0000 {
-             label = "storage";
-             reg = <0x000f0000 DT_SIZE_K(1024)>;
-         };
-     };
- };
+/delete-node/ &storage_partition;
 
- &sdl_dc {
+/ {
+	keys: keys {
+		compatible = "gpio-keys";
+		button_up: button_up {
+			gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
+			zephyr,code = <INPUT_KEY_UP>;
+		};
+
+		button_down: button_down {
+			gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
+			zephyr,code = <INPUT_KEY_DOWN>;
+		};
+
+		button_enter: button_enter {
+			gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
+			zephyr,code = <INPUT_KEY_ENTER>;
+		};
+	};
+
+	lvgl_keypad_input {
+		compatible = "zephyr,lvgl-keypad-input";
+		input = <&keys>;
+		input-codes = <INPUT_KEY_UP INPUT_KEY_DOWN INPUT_KEY_ENTER>;
+		lvgl-codes = <LV_KEY_UP LV_KEY_DOWN LV_KEY_ENTER>;
+	};
+};
+
+&gpio0 {
+	ngpios = <9>;
+
+	sdl_gpio {
+		status = "okay";
+		compatible = "zephyr,gpio-emul-sdl";
+		/* Skip pin 0 with the unknown code 0 */
+		scancodes = <0 21 5 30 31 32 80 79 40>;
+	};
+};
+
+&sdl_dc {
 	compatible = "zephyr,sdl-dc";
 	width = <128>;
     height = <64>;
+};
+
+&flash0 {
+    partitions {
+        compatible = "fixed-partitions";
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        storage_partition: partition@f0000 {
+            label = "storage";
+            reg = <0x000f0000 DT_SIZE_K(1024)>;
+        };
+    };
 };

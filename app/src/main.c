@@ -39,7 +39,7 @@ int main(void)
 	
 	while(1) {
 		lv_timer_handler();
-		k_msleep(10);
+		k_sleep(K_MSEC(10));
 	}
 
 	return 0;

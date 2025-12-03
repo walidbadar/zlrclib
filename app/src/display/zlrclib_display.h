@@ -12,6 +12,7 @@
 #include <string.h>
 
 #include <lvgl.h>
+#include <lvgl_input_device.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/display.h>
