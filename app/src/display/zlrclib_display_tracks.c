@@ -9,16 +9,28 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(zlrclib_display_mgr);
 
-typedef struct {
-    const char *title;
-    const char *artist;
-} track_t;
-
-/* Sample tracks */
-static const track_t tracks[] = {
-    {"David Kushner", "Mr Forgettable"},
-    {"Seafret", "Atlantic"},
-    {"Taylor Swift", "Wi$h Li$t"},
+static struct zlrclib_track_info tracks[] = {
+    {
+        .id = 1,
+        .track_name = "Mr Forgettable",
+        .artist_name = "David Kushner",
+        .album_name = "Footprints",
+        .instrumental = false
+    },
+    {
+        .id = 2,
+        .track_name = "Atlantic",
+        .artist_name = "Seafret",
+        .album_name = "Most of Us Are Strangers",
+        .instrumental = false
+    },
+    {
+        .id = 3,
+        .track_name = "Wi$h Li$t",
+        .artist_name = "Taylor Swift",
+        .album_name = "The Fate of Ophelia",
+        .instrumental = false
+    }
 };
 
 #define TRACK_COUNT (sizeof(tracks) / sizeof(tracks[0]))
@@ -77,8 +89,8 @@ static void zlrclib_display_tracks_event_handler(lv_event_t *e)
                 
             case LV_KEY_ENTER:
                 LOG_INF("Selected: %s - %s", 
-                        tracks[current_track].title, 
-                        tracks[current_track].artist);
+                        tracks[current_track].track_name, 
+                        tracks[current_track].artist_name);
                 lv_obj_fade_out(track_list_container, 500, 1 * MSEC_PER_SEC);
                 k_work_submit(&zlrclib_work);
                 break;
@@ -119,9 +131,9 @@ void zlrclib_display_tracks(void)
         /* Song info as single line */
         lv_obj_t *label = lv_label_create(btn);
         char text[64];
-        snprintf(text, sizeof(text), "%s - %s", tracks[i].title, tracks[i].artist);
+        snprintf(text, sizeof(text), "%s - %s", tracks[i].track_name, tracks[i].artist_name);
         lv_obj_center(label);
-        lv_obj_set_width(label, DISPLAY_WIDTH);
+        lv_obj_set_width(label, DISPLAY_WIDTH - 20);
         lv_obj_set_style_text_font(label, &lv_font_montserrat_12, 0);
         lv_label_set_long_mode(label, LV_LABEL_LONG_SCROLL_CIRCULAR);
         lv_label_set_text(label, text);

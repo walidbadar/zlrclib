@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <zlrclib.h>
 #include <zlrclib_display.h>
 #include <zlrclib/net/lib/wifi_conn_mgr.h>
 

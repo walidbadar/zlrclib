@@ -22,7 +22,6 @@ LOG_MODULE_REGISTER(zlrclib_display_lyrics);
 
 #define ARTIST "David+Kushner"
 #define TRACK  "Mr+Forgettable"
-const uint8_t *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_name=" TRACK;
 
 static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_call final_data, void *user_data)
 {
@@ -57,7 +56,9 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 	int ret;
 	zlrclib_rm(LYRICS);
 
-	static lv_obj_t *label;
+	uint8_t url[256];
+	snprintf(url, sizeof(url), "https://lrclib.net/api/get?artist_name=%s&track_name=%s", ARTIST, TRACK);
+	LOG_INF("URL: %s", url);
 
 	struct requests_ctx ctx;
 	while (requests_get(&ctx, zlrclib_display_lyrics_cb, url) < 0) {
@@ -91,6 +92,7 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 			break;
 		}
 
+		static lv_obj_t *label;
 		if(label == NULL) {
 			label = lv_label_create(lv_scr_act());
 			lv_obj_center(label);

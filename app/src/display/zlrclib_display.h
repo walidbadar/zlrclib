@@ -21,6 +21,14 @@
 #define DISPLAY_WIDTH DT_PROP(DISPLAY_NODE, width)
 #define DISPLAY_HEIGHT DT_PROP(DISPLAY_NODE, height)
 
+struct zlrclib_track_info {
+	uint16_t id;
+	uint8_t track_name[32];
+	uint8_t artist_name[32];
+	uint8_t album_name[32];
+	bool instrumental;
+};
+
 int zlrclib_display_init(void);
 void zlrclib_display_mgr_init(void);
 void zlrclib_display_tracks(void);
