@@ -20,8 +20,20 @@ LOG_MODULE_REGISTER(zlrclib_display_lyrics);
 #define VERSE_OFFSET 10
 #define VERSE_DELAY 5
 
-#define ARTIST "David+Kushner"
-#define TRACK  "Mr+Forgettable"
+#define ARTIST "Seafret"
+#define TRACK  "Atlantis"
+
+static void zlrclib_display_label(lv_obj_t *label)
+{
+    lv_obj_set_size(label, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+    lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_bg_opa(label, LV_OPA_COVER, 0);
+    lv_obj_set_style_bg_color(label, lv_color_black(), 0);
+    lv_obj_set_style_text_color(label, lv_color_white(), 0);
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_14, 0);
+    lv_obj_fade_out(label, MSEC_PER_SEC, 0);
+    lv_obj_fade_in(label, MSEC_PER_SEC, 100);
+}
 
 static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_call final_data, void *user_data)
 {
@@ -54,21 +66,29 @@ static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_
 void zlrclib_display_lyrics_work(struct k_work *item)
 {
 	int ret;
+	uint16_t len = 0;
+	uint16_t pos = 0;
+	uint8_t *pos_start = NULL;
+	uint8_t *pos_end = NULL;
+	uint8_t url[256];
+
 	zlrclib_rm(LYRICS);
 
-	uint8_t url[256];
+	static lv_obj_t *load_label = NULL;
+	if (load_label == NULL) {
+		load_label = lv_label_create(lv_scr_act());
+		zlrclib_display_label(load_label);
+		lv_label_set_text(load_label, "Loading");
+	}
+
 	snprintf(url, sizeof(url), "https://lrclib.net/api/get?artist_name=%s&track_name=%s", ARTIST, TRACK);
 	LOG_INF("URL: %s", url);
 
 	struct requests_ctx ctx;
 	while (requests_get(&ctx, zlrclib_display_lyrics_cb, url) < 0) {
 		LOG_ERR("Requests GET failed");
+		k_msleep(CONFIG_NET_SOCKETS_CONNECT_TIMEOUT);
 	}
-
-	uint16_t len = 0;
-	uint16_t pos = 0;
-	uint8_t *pos_start;
-	uint8_t *pos_end;
 
 	zlrclib_fread(LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU, 0);
 
@@ -92,19 +112,17 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 			break;
 		}
 
-		static lv_obj_t *label;
-		if(label == NULL) {
-			label = lv_label_create(lv_scr_act());
-			lv_obj_center(label);
-			lv_obj_set_width(label, DISPLAY_WIDTH);
-			lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
-			lv_label_set_text(label, "");
+		static lv_obj_t *lyrics_label = NULL;
+		if(lyrics_label == NULL) {
+			lyrics_label = lv_label_create(lv_scr_act());
+			zlrclib_display_label(lyrics_label);
+			lv_label_set_text(lyrics_label, "");
+			lv_label_set_text(load_label, "");
 		}
 
-		lv_obj_fade_out(label, 100, 0);
-		lv_obj_fade_in(label, 100, 100);
-
-		lv_label_set_text(label, ctx.recv_buf);
+		lv_obj_fade_out(lyrics_label, MSEC_PER_SEC, 0);
+		lv_obj_fade_in(lyrics_label, MSEC_PER_SEC, 100);
+		lv_label_set_text(lyrics_label, ctx.recv_buf);
 
 		pos += len + 2;
 		LOG_INF("Read postion: %d", pos);

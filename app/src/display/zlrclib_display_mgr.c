@@ -159,6 +159,10 @@ static void zlrclib_display_menu_handler(lv_event_t *e)
                 LOG_INF("ENTER pressed - Selected: %s", menu_items[current_menu]);
                 zlrclib_display_menu_select(current_menu);
                 break;
+            
+            case LV_KEY_BACKSPACE:
+                LOG_INF("Backspace pressed");
+                break;
         }
     }
 }
@@ -193,7 +197,7 @@ void zlrclib_display_mgr_init(void)
         
         lv_obj_t *label = lv_label_create(btn);
         lv_obj_center(label);
-        lv_obj_set_style_text_font(label, &lv_font_montserrat_12, 0);
+        lv_obj_set_style_text_font(label, &lv_font_montserrat_14, 0);
         lv_label_set_text(label, menu_items[i]);
     }
     

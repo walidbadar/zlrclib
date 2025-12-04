@@ -94,6 +94,11 @@ static void zlrclib_display_tracks_event_handler(lv_event_t *e)
                 lv_obj_fade_out(track_list_container, 500, 1 * MSEC_PER_SEC);
                 k_work_submit(&zlrclib_work);
                 break;
+            
+            case LV_KEY_BACKSPACE:
+                LOG_INF("BACKSPACE pressed");
+                zlrclib_display_mgr_init();
+                break;
         }
     }
 }
@@ -133,8 +138,8 @@ void zlrclib_display_tracks(void)
         char text[64];
         snprintf(text, sizeof(text), "%s - %s", tracks[i].track_name, tracks[i].artist_name);
         lv_obj_center(label);
-        lv_obj_set_width(label, DISPLAY_WIDTH - 20);
-        lv_obj_set_style_text_font(label, &lv_font_montserrat_12, 0);
+        lv_obj_set_width(label, DISPLAY_WIDTH - 10);
+        lv_obj_set_style_text_font(label, &lv_font_montserrat_14, 0);
         lv_label_set_long_mode(label, LV_LABEL_LONG_SCROLL_CIRCULAR);
         lv_label_set_text(label, text);
     }
