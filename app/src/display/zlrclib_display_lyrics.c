@@ -121,7 +121,7 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 		}
 
 		lv_obj_fade_out(lyrics_label, MSEC_PER_SEC, 0);
-		lv_obj_fade_in(lyrics_label, MSEC_PER_SEC, 100);
+		lv_obj_fade_in(lyrics_label, MSEC_PER_SEC, 0);
 		lv_label_set_text(lyrics_label, ctx.recv_buf);
 
 		pos += len + 2;

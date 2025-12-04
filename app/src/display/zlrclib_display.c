@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <zlrclib/zephyr_logo.h>
 #include <zlrclib_display.h>
 
 #include <zephyr/logging/log.h>
@@ -19,12 +20,18 @@ int zlrclib_display_init(void)
 
 	display_blanking_off(ddev);
 
-	lv_obj_t *display_title = lv_label_create(lv_scr_act());
-	lv_obj_align(display_title, LV_ALIGN_TOP_MID, 0, 0);
-	lv_obj_set_size(display_title, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	lv_obj_set_style_text_align(display_title, LV_TEXT_ALIGN_CENTER, 0);
-	lv_label_set_text(display_title, "ZLRCLIB APP: Powered by Zephyr RTOS");
-	lv_obj_fade_out(display_title, 500, 3 * MSEC_PER_SEC);
+	LV_IMG_DECLARE(zephyr_logo);
+	lv_obj_t *logo = lv_image_create(lv_scr_act());
+	lv_obj_set_size(logo, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	lv_obj_fade_out(logo, MSEC_PER_SEC, MSEC_PER_SEC);
+	lv_image_set_src(logo, &zephyr_logo);
+
+	uint32_t elapsed = 0;
+	while (elapsed < MSEC_PER_SEC) {
+		lv_timer_handler();
+		k_msleep(10);
+		elapsed += 10;
+	}
 
 	LOG_INF("ZLRCLIB APP Started");
 
