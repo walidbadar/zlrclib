@@ -11,8 +11,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);
 
-K_WORK_DEFINE(zlrclib_work, zlrclib_display_lyrics);
-
 int main(void)
 {
 	int ret = 0;
@@ -35,7 +33,7 @@ int main(void)
 		return ret;
 	}
 
-	k_work_submit(&zlrclib_work);
+	zlrclib_display_mgr_init();
 	
 	while(1) {
 		lv_timer_handler();

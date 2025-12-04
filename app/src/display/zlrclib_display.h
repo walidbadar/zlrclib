@@ -22,8 +22,8 @@
 #define DISPLAY_HEIGHT DT_PROP(DISPLAY_NODE, height)
 
 int zlrclib_display_init(void);
-void zlrclib_display_lyrics(struct k_work *item);
-void zlrclib_display_songs(void);
-void zlrclib_menu_create(void);
+void zlrclib_display_mgr_init(void);
+void zlrclib_display_tracks(void);
+void zlrclib_display_lyrics_work(struct k_work *item);
 
 #endif /* ZLRCLIB_DISPLAY_H_ */

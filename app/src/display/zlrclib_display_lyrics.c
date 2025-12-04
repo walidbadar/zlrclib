@@ -24,8 +24,6 @@ LOG_MODULE_REGISTER(zlrclib_display_lyrics);
 #define TRACK  "Mr+Forgettable"
 const uint8_t *url = "https://lrclib.net/api/get?artist_name=" ARTIST "&track_name=" TRACK;
 
-static lv_obj_t *lyrics_label;
-
 static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_call final_data, void *user_data)
 {
 	static bool is_synced_lyrics = false;
@@ -54,10 +52,12 @@ static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_
 	return 0;
 }
 
-void zlrclib_display_lyrics(struct k_work *item)
+void zlrclib_display_lyrics_work(struct k_work *item)
 {
 	int ret;
 	zlrclib_rm(LYRICS);
+
+	static lv_obj_t *label;
 
 	struct requests_ctx ctx;
 	while (requests_get(&ctx, zlrclib_display_lyrics_cb, url) < 0) {
@@ -91,18 +91,18 @@ void zlrclib_display_lyrics(struct k_work *item)
 			break;
 		}
 
-		if(lyrics_label == NULL) {
-			lyrics_label = lv_label_create(lv_scr_act());
-			lv_obj_align(lyrics_label, LV_ALIGN_TOP_MID, 0, 0);
-			lv_obj_set_width(lyrics_label, DISPLAY_WIDTH);
-			lv_obj_set_style_text_align(lyrics_label, LV_TEXT_ALIGN_CENTER, 0);
-			lv_label_set_text(lyrics_label, "");
+		if(label == NULL) {
+			label = lv_label_create(lv_scr_act());
+			lv_obj_center(label);
+			lv_obj_set_width(label, DISPLAY_WIDTH);
+			lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
+			lv_label_set_text(label, "");
 		}
 
-		lv_obj_fade_out(lyrics_label, 100, 0);
-		lv_obj_fade_in(lyrics_label, 100, 100);
+		lv_obj_fade_out(label, 100, 0);
+		lv_obj_fade_in(label, 100, 100);
 
-		lv_label_set_text(lyrics_label, ctx.recv_buf);
+		lv_label_set_text(label, ctx.recv_buf);
 
 		pos += len + 2;
 		LOG_INF("Read postion: %d", pos);
