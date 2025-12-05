@@ -15,13 +15,21 @@ LOG_MODULE_REGISTER(zlrclib_display_lyrics);
 #define LYRICS_POS_END "\\n"
 #define LYRICS_END " \"}"
 
-#define LYRICS "syncedLyrics"
+#define LYRICS_FILE "syncedLyrics"
 #define LYRICS_OFFSET 15
 #define VERSE_OFFSET 10
 #define VERSE_DELAY 5
 
 #define ARTIST "Seafret"
 #define TRACK  "Atlantis"
+
+void zlrclib_space_to_plus(char *str) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ' ') {
+            str[i] = '+';
+        }
+    }
+}
 
 static void zlrclib_display_label(lv_obj_t *label)
 {
@@ -43,7 +51,7 @@ static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_
 	char *pos = NULL;
 
 	if (!is_synced_lyrics) {
-		pos = strstr(rsp->body_frag_start, LYRICS);
+		pos = strstr(rsp->body_frag_start, LYRICS_FILE);
 	}
 
 	if (pos) {
@@ -53,7 +61,7 @@ static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_
 	}
 
 	if (is_synced_lyrics) {
-		zlrclib_fwrite(LYRICS, rsp->body_frag_start, rsp->body_frag_len,
+		zlrclib_fwrite(LYRICS_FILE, rsp->body_frag_start, rsp->body_frag_len,
 			       ctx->recv_buf_len);
 		ctx->recv_buf_len += rsp->body_frag_len;
 	}
@@ -72,7 +80,7 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 	uint8_t *pos_end = NULL;
 	uint8_t url[256];
 
-	zlrclib_rm(LYRICS);
+	zlrclib_rm(LYRICS_FILE);
 
 	static lv_obj_t *load_label = NULL;
 	if (load_label == NULL) {
@@ -81,7 +89,14 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 		lv_label_set_text(load_label, "Loading");
 	}
 
-	snprintf(url, sizeof(url), "https://lrclib.net/api/get?artist_name=%s&track_name=%s", ARTIST, TRACK);
+	struct zlrclib_track_info track_info;
+	memcpy(track_info.track_name, TRACK, sizeof(TRACK));
+	memcpy(track_info.artist_name, ARTIST, sizeof(ARTIST));
+
+	zlrclib_space_to_plus(track_info.track_name);
+	zlrclib_space_to_plus(track_info.artist_name);
+
+	snprintf(url, sizeof(url), "https://lrclib.net/api/get?artist_name=%s&track_name=%s", track_info.artist_name, track_info.track_name);
 	LOG_INF("URL: %s", url);
 
 	struct requests_ctx ctx;
@@ -90,7 +105,7 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 		k_msleep(CONFIG_NET_SOCKETS_CONNECT_TIMEOUT);
 	}
 
-	zlrclib_fread(LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU, 0);
+	zlrclib_fread(LYRICS_FILE, ctx.recv_buf, CONFIG_NET_IPV4_MTU, 0);
 
 	while(1) {
 		pos_start = strstr(ctx.recv_buf, LYRICS_POS_START);
@@ -100,7 +115,7 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 			len = strlen(pos_start) - strlen(pos_end);
 		}
 
-		ret = zlrclib_fread(LYRICS, ctx.recv_buf, len - VERSE_OFFSET, pos + VERSE_OFFSET);
+		ret = zlrclib_fread(LYRICS_FILE, ctx.recv_buf, len - VERSE_OFFSET, pos + VERSE_OFFSET);
 		if (ret < 0) {
 			break;
 		}
@@ -127,7 +142,7 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 		pos += len + 2;
 		LOG_INF("Read postion: %d", pos);
 
-		ret = zlrclib_fread(LYRICS, ctx.recv_buf, CONFIG_NET_IPV4_MTU, pos);
+		ret = zlrclib_fread(LYRICS_FILE, ctx.recv_buf, CONFIG_NET_IPV4_MTU, pos);
 		if (ret < 0) {
 			break;
 		}
