@@ -41,9 +41,10 @@ The zlrclib firmware supports the following features, some of which depend on ha
 
 - [✔️] Wi-Fi provisioning via http server
 - [✔️] Requests library based on http client
-- [✔️] Little Filesystem to manage large data
-- [✔️] Display lyrics using lvgl module 
+- [✔️] Little Filesystem to store temporary data
+- [✔️] GUI using lvgl library 
 - [✖️] OTA Updates using mcumgr
+- [✖️] Spotify Web API Integration
 
 ## Getting Started
 
