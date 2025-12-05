@@ -28,13 +28,13 @@ int main(void)
 #endif
 
 	ret = zlrclib_display_init();
-	if(ret < 0) {
+	if (ret < 0) {
 		return ret;
 	}
 
 	zlrclib_display_mgr_init();
-	
-	while(1) {
+
+	while (1) {
 		lv_timer_handler();
 		k_sleep(K_MSEC(10));
 	}

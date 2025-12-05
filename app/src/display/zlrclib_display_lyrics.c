@@ -12,38 +12,40 @@
 LOG_MODULE_REGISTER(zlrclib_display_lyrics);
 
 #define LYRICS_POS_START "["
-#define LYRICS_POS_END "\\n"
-#define LYRICS_END " \"}"
+#define LYRICS_POS_END   "\\n"
+#define LYRICS_END       " \"}"
 
-#define LYRICS_FILE "syncedLyrics"
+#define LYRICS_FILE   "syncedLyrics"
 #define LYRICS_OFFSET 15
-#define VERSE_OFFSET 10
-#define VERSE_DELAY 5
+#define VERSE_OFFSET  10
+#define VERSE_DELAY   5
 
 #define ARTIST "Seafret"
 #define TRACK  "Atlantis"
 
-void zlrclib_space_to_plus(char *str) {
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] == ' ') {
-            str[i] = '+';
-        }
-    }
+void zlrclib_space_to_plus(char *str)
+{
+	for (int i = 0; str[i] != '\0'; i++) {
+		if (str[i] == ' ') {
+			str[i] = '+';
+		}
+	}
 }
 
 static void zlrclib_display_label(lv_obj_t *label)
 {
-    lv_obj_set_size(label, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-    lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_bg_opa(label, LV_OPA_COVER, 0);
-    lv_obj_set_style_bg_color(label, lv_color_black(), 0);
-    lv_obj_set_style_text_color(label, lv_color_white(), 0);
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_14, 0);
-    lv_obj_fade_out(label, MSEC_PER_SEC, 0);
-    lv_obj_fade_in(label, MSEC_PER_SEC, 100);
+	lv_obj_set_size(label, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
+	lv_obj_set_style_bg_opa(label, LV_OPA_COVER, 0);
+	lv_obj_set_style_bg_color(label, lv_color_black(), 0);
+	lv_obj_set_style_text_color(label, lv_color_white(), 0);
+	lv_obj_set_style_text_font(label, &lv_font_montserrat_14, 0);
+	lv_obj_fade_out(label, MSEC_PER_SEC, 0);
+	lv_obj_fade_in(label, MSEC_PER_SEC, 100);
 }
 
-static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_call final_data, void *user_data)
+static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_call final_data,
+				     void *user_data)
 {
 	static bool is_synced_lyrics = false;
 
@@ -56,7 +58,7 @@ static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_
 
 	if (pos) {
 		rsp->body_frag_start = pos + LYRICS_OFFSET;
-		rsp->body_frag_len = strlen(pos) - LYRICS_OFFSET; 
+		rsp->body_frag_len = strlen(pos) - LYRICS_OFFSET;
 		is_synced_lyrics = true;
 	}
 
@@ -96,7 +98,8 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 	zlrclib_space_to_plus(track_info.track_name);
 	zlrclib_space_to_plus(track_info.artist_name);
 
-	snprintf(url, sizeof(url), "https://lrclib.net/api/get?artist_name=%s&track_name=%s", track_info.artist_name, track_info.track_name);
+	snprintf(url, sizeof(url), "https://lrclib.net/api/get?artist_name=%s&track_name=%s",
+		 track_info.artist_name, track_info.track_name);
 	LOG_INF("URL: %s", url);
 
 	struct requests_ctx ctx;
@@ -107,15 +110,16 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 
 	zlrclib_fread(LYRICS_FILE, ctx.recv_buf, CONFIG_NET_IPV4_MTU, 0);
 
-	while(1) {
+	while (1) {
 		pos_start = strstr(ctx.recv_buf, LYRICS_POS_START);
 		pos_end = strstr(ctx.recv_buf, LYRICS_POS_END);
 
-		if(pos_start && pos_end){			
+		if (pos_start && pos_end) {
 			len = strlen(pos_start) - strlen(pos_end);
 		}
 
-		ret = zlrclib_fread(LYRICS_FILE, ctx.recv_buf, len - VERSE_OFFSET, pos + VERSE_OFFSET);
+		ret = zlrclib_fread(LYRICS_FILE, ctx.recv_buf, len - VERSE_OFFSET,
+				    pos + VERSE_OFFSET);
 		if (ret < 0) {
 			break;
 		}
@@ -123,12 +127,12 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 		LOG_INF("%s", ctx.recv_buf);
 
 		ret = memcmp(ctx.recv_buf, LYRICS_END, sizeof(LYRICS_END));
-		if(!ret) {
+		if (!ret) {
 			break;
 		}
 
 		static lv_obj_t *lyrics_label = NULL;
-		if(lyrics_label == NULL) {
+		if (lyrics_label == NULL) {
 			lyrics_label = lv_label_create(lv_scr_act());
 			zlrclib_display_label(lyrics_label);
 			lv_label_set_text(lyrics_label, "");
