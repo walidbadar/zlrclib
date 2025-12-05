@@ -37,16 +37,21 @@ static lv_group_t *input_group;
 static const struct device *lvgl_keypad =
     DEVICE_DT_GET(DT_COMPAT_GET_ANY_STATUS_OKAY(zephyr_lvgl_keypad_input));
 
+static void zlrclib_display_menu_item(lv_obj_t *label, uint8_t *item)
+{
+    lv_label_set_text(label, item);
+    lv_obj_center(label);
+    lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_color(label, lv_color_black(), 0);
+}
+
 static void zlrclib_display_menu_home(void)
 {
     home_screen = lv_obj_create(NULL);
     lv_obj_set_style_bg_color(home_screen, lv_color_white(), 0);
     
     lv_obj_t *label = lv_label_create(home_screen);
-    lv_label_set_text(label, "HOME SCREEN\n\nPress ENTER to return");
-    lv_obj_center(label);
-    lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_color(label, lv_color_black(), 0);
+    zlrclib_display_menu_item(label, "HOME SCREEN\n\nPress ENTER to return");
 }
 
 static void zlrclib_display_menu_system(void)
@@ -55,10 +60,7 @@ static void zlrclib_display_menu_system(void)
     lv_obj_set_style_bg_color(system_screen, lv_color_white(), 0);
     
     lv_obj_t *label = lv_label_create(system_screen);
-    lv_label_set_text(label, "SYSTEM SETTINGS\n\nPress ENTER to return");
-    lv_obj_center(label);
-    lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_color(label, lv_color_black(), 0);
+    zlrclib_display_menu_item(label, "SYSTEM SETTINGS\n\nPress ENTER to return");
 }
 
 static void zlrclib_display_menu_load_handler(lv_event_t *e)
