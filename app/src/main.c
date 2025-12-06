@@ -10,8 +10,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);
 
-#define DISPLAY_THREAD_STACK_SIZE 4096
-#define DISPLAY_THREAD_PRIORITY 6
+#define ZLRCLIB_DISPLAY_STACK_SIZE 4096
+#define ZLRCLIB_DISPLAY_PRIORITY 6
 
 static void zlrclib_display_thread(void)
 {
@@ -50,4 +50,4 @@ int main(void)
 	return 0;
 }
 
-K_THREAD_DEFINE(zlrclib_display_tid, DISPLAY_THREAD_STACK_SIZE, zlrclib_display_thread, NULL, NULL, NULL, DISPLAY_THREAD_PRIORITY, 0, 200);
+K_THREAD_DEFINE(zlrclib_display_tid, ZLRCLIB_DISPLAY_STACK_SIZE, zlrclib_display_thread, NULL, NULL, NULL, ZLRCLIB_DISPLAY_PRIORITY, 0, 200);

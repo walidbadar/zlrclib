@@ -37,8 +37,6 @@ static void zlrclib_display_label(lv_obj_t *label)
 	lv_obj_set_size(label, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
 	lv_obj_set_style_bg_opa(label, LV_OPA_COVER, 0);
-	lv_obj_set_style_bg_color(label, lv_color_black(), 0);
-	lv_obj_set_style_text_color(label, lv_color_white(), 0);
 	lv_obj_fade_out(label, MSEC_PER_SEC, 0);
 	lv_obj_fade_in(label, MSEC_PER_SEC, 100);
 }
@@ -87,7 +85,7 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 	if (load_label == NULL) {
 		load_label = lv_label_create(lv_scr_act());
 		zlrclib_display_label(load_label);
-		lv_label_set_text(load_label, "Loading");
+		lv_label_set_text(load_label, "Loading...");
 	}
 
 	struct zlrclib_track_info track_info;
