@@ -36,19 +36,17 @@ K_WORK_DEFINE(zlrclib_work, zlrclib_display_lyrics_work);
 static const struct device *lvgl_keypad =
 	DEVICE_DT_GET(DT_COMPAT_GET_ANY_STATUS_OKAY(zephyr_lvgl_keypad_input));
 
-static void zlrclib_display_tracks_select(void)
+static void zlrclib_display_tracks_update(void)
 {
 	for (int i = 0; i < ARRAY_SIZE(tracks); i++) {
 		lv_obj_t *btn = lv_obj_get_child(track_list_container, i);
-		lv_obj_t *label = lv_obj_get_child(btn, 0);
+
 		if (i == current_track) {
 			/* Selected: black background, white text */
-			lv_obj_set_style_bg_color(btn, lv_color_black(), 0);
-			lv_obj_set_style_text_color(label, lv_color_white(), 0);
+			lv_obj_set_style_border_color(btn, lv_color_black(), 0);
 		} else {
 			/* Unselected: white background, black text */
-			lv_obj_set_style_bg_color(btn, lv_color_white(), 0);
-			lv_obj_set_style_text_color(label, lv_color_black(), 0);
+			lv_obj_set_style_border_color(btn, lv_color_white(), 0);
 		}
 	}
 }
@@ -64,7 +62,7 @@ static void zlrclib_display_tracks_event_handler(lv_event_t *e)
 			LOG_INF("UP pressed");
 			if (current_track > 0) {
 				current_track--;
-				zlrclib_display_tracks_select();
+				zlrclib_display_tracks_update();
 			}
 			break;
 
@@ -72,7 +70,7 @@ static void zlrclib_display_tracks_event_handler(lv_event_t *e)
 			LOG_INF("DOWN pressed");
 			if (current_track < ARRAY_SIZE(tracks) - 1) {
 				current_track++;
-				zlrclib_display_tracks_select();
+				zlrclib_display_tracks_update();
 			}
 			break;
 
@@ -144,7 +142,7 @@ void zlrclib_display_tracks(void)
 
 	/* Set initial selection */
 	current_track = 0;
-	zlrclib_display_tracks_select();
+	zlrclib_display_tracks_update();
 
 	/* Load the track screen */
 	lv_scr_load(track_screen);

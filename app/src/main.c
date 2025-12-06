@@ -47,7 +47,7 @@ int main(void)
 	}
 #endif
 
-	return 0;
+	return ret;
 }
 
 K_THREAD_DEFINE(zlrclib_display_tid, ZLRCLIB_DISPLAY_STACK_SIZE, zlrclib_display_thread, NULL, NULL, NULL, ZLRCLIB_DISPLAY_PRIORITY, 0, 200);

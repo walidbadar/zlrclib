@@ -87,16 +87,13 @@ static void zlrclib_display_menu_update(void)
 	uint32_t i;
 	for (i = 0; i < MENU_COUNT; i++) {
 		lv_obj_t *btn = lv_obj_get_child(menu_list, i);
-		lv_obj_t *label = lv_obj_get_child(btn, 0);
 
 		if (i == current_menu) {
 			/* Selected item: black background, white text */
-			lv_obj_set_style_bg_color(btn, lv_color_black(), 0);
-			lv_obj_set_style_text_color(label, lv_color_white(), 0);
+			lv_obj_set_style_border_color(btn, lv_color_black(), 0);
 		} else {
 			/* Unselected item: white background, black text */
-			lv_obj_set_style_bg_color(btn, lv_color_white(), 0);
-			lv_obj_set_style_text_color(label, lv_color_black(), 0);
+			lv_obj_set_style_border_color(btn, lv_color_white(), 0);
 		}
 	}
 }
