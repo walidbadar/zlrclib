@@ -39,7 +39,6 @@ static void zlrclib_display_label(lv_obj_t *label)
 	lv_obj_set_style_bg_opa(label, LV_OPA_COVER, 0);
 	lv_obj_set_style_bg_color(label, lv_color_black(), 0);
 	lv_obj_set_style_text_color(label, lv_color_white(), 0);
-	lv_obj_set_style_text_font(label, &lv_font_montserrat_14, 0);
 	lv_obj_fade_out(label, MSEC_PER_SEC, 0);
 	lv_obj_fade_in(label, MSEC_PER_SEC, 100);
 }
