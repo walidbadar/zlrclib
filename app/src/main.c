@@ -5,7 +5,7 @@
  */
 
 #include <zlrclib_display.h>
-#include <zlrclib/net/lib/wifi_conn_mgr.h>
+#include <wifi_conn_mgr.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib);

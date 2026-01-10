@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 menuconfig WIFI_CONNECTION_MANAGER
-    bool "Enable WiFi Connection Manager"
+    bool "ZLRCLIB WiFi Connection Manager"
     depends on WIFI
     depends on NET_L2_WIFI_MGMT
     select LED
@@ -17,13 +17,11 @@ menu "WiFi Station Configuration"
 
 config WIFI_STATIC_SSID
     string "WiFi SSID"
-    default "YourSSID"
     help
       The SSID of the WiFi network to connect to in station (client) mode.
 
 config WIFI_STATIC_PSK
     string "WiFi Password"
-    default "YourPassword"
     help
       The pre-shared key (password) for the WiFi network.
 
@@ -34,6 +32,8 @@ config WIFI_CONN_RETRY_DELAY
       Time in seconds to wait before retrying a failed connection attempt.
 
 endmenu  # WiFi Station Configuration
+
+if WIFI_USAGE_MODE_STA_AP
 
 menu "WiFi Access Point Configuration"
 
@@ -61,18 +61,16 @@ config WIFI_AP_STATIC_NETMASK
     help
       Network mask used in AP mode.
 
-endmenu  # WiFi Access Point Configuration
-
-menu "DHCP Server Configuration"
-
 config NET_DHCPV4_SERVER
     bool "Enable DHCP Server"
-    default y if WIFI_USAGE_MODE_STA_AP
+    default y
     help
       Enable a DHCP server when in AP mode. Devices connecting to the
       AP will be assigned IP addresses automatically.
 
-endmenu  # DHCP Server Configuration
+endmenu  # WiFi Access Point Configuration
+
+endif  # WIFI_USAGE_MODE_STA_AP
 
 module = WIFI_CONNECTION_MANAGER
 module-str = wifi_conn_mgr

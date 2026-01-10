@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#ifndef LIB_WIFI_CONN_MGR_H_
-#define LIB_WIFI_CONN_MGR_H_
+#ifndef ZLRCLIB_WIFI_CONN_MGR_H_
+#define ZLRCLIB_WIFI_CONN_MGR_H_
 
 #include <stdint.h>
 #include <zephyr/net/wifi_mgmt.h>
@@ -15,4 +15,4 @@ int wifi_ap_disable(struct net_if *iface);
 int wifi_connect(struct net_if *iface, const uint8_t *ssid, const uint8_t *psk);
 int wifi_disconnect(struct net_if *iface, const uint8_t *ssid, const uint8_t *psk);
 
-#endif /* LIB_WIFI_CONN_MGR_H_ */
+#endif /* ZLRCLIB_WIFI_CONN_MGR_H_ */

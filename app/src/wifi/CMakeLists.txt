@@ -1,4 +1,4 @@
 # Copyright (c) 2025 Muhammad Waleed Badar
 # SPDX-License-Identifier: Apache-2.0
 
-rsource "wifi_conn_mgr/Kconfig"
+target_sources(app PRIVATE wifi_conn_mgr.c)
