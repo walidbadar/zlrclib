@@ -6,7 +6,7 @@
 
 #include <zlrclib_display.h>
 #include <zlrclib_filesystem.h>
-#include <zlrclib/net/lib/requests.h>
+#include <requests/net/lib/requests.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(zlrclib_display_lyrics);
@@ -45,9 +45,16 @@ static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_
 				     void *user_data)
 {
 	static bool is_synced_lyrics = false;
+	static uint16_t total_frag_len;
 
 	struct requests_ctx *ctx = (struct requests_ctx *)user_data;
 	char *pos = NULL;
+
+	if (rsp->body_frag_len == 0) {
+		LOG_WRN("No lyrics data received");
+		ctx->err = -EINVAL;
+		return 0;
+	}
 
 	if (!is_synced_lyrics) {
 		pos = strstr(rsp->body_frag_start, LYRICS_FILE);
@@ -61,11 +68,12 @@ static int zlrclib_display_lyrics_cb(struct http_response *rsp, enum http_final_
 
 	if (is_synced_lyrics) {
 		zlrclib_fwrite(LYRICS_FILE, rsp->body_frag_start, rsp->body_frag_len,
-			       ctx->recv_buf_len);
-		ctx->recv_buf_len += rsp->body_frag_len;
+			       total_frag_len);
+		total_frag_len += rsp->body_frag_len;
 	}
 
 	memset(rsp->recv_buf, 0, rsp->recv_buf_len);
+	total_frag_len = (final_data == HTTP_DATA_FINAL) ? 0 : total_frag_len;
 
 	return 0;
 }
@@ -100,7 +108,16 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 	LOG_INF("URL: %s", url);
 
 	struct requests_ctx ctx;
-	while (requests_get(&ctx, zlrclib_display_lyrics_cb, url) < 0) {
+	ret = requests_init(&ctx, url);
+	if (ret < 0) {
+		LOG_ERR("Requests init failed");
+		return;
+	}
+
+	requests_setopt(&ctx, REQUESTS_PROTOCOL, "HTTP/1.1");
+	requests_setopt(&ctx, REQUESTS_WRITEFUNCTION, zlrclib_display_lyrics_cb);
+
+	while (requests(&ctx, HTTP_GET) < 0 || ctx.err < 0) {
 		LOG_ERR("Requests GET failed");
 		k_msleep(CONFIG_NET_SOCKETS_CONNECT_TIMEOUT);
 	}

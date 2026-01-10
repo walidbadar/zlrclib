@@ -98,13 +98,13 @@ repository. Note that Zephyr sample boards may be used if an
 appropriate overlay is provided (see `app/boards`). Some other
 build configurations are also provided:
 
-- `debug.conf`: Enable debug-friendly build
-- `shell.conf`: Enable shell facilities
+- `overlay-debug.conf`: Enable debug-friendly build
+- `overlay-shell.conf`: Enable shell facilities
 
 They can be enabled by setting `OVERLAY_CONFIG`, e.g.
 
 ```shell
-west build -b $BOARD app -- -DOVERLAY_CONFIG=debug.conf
+west build -b $BOARD app -- -DOVERLAY_CONFIG=overlay-debug.conf
 ```
 
 Once you have built the application, run the following command:
