@@ -40,10 +40,8 @@ zlrclib is licensed under the Apache-2.0 license. The documentation is licensed 
 The zlrclib firmware supports the following features, some of which depend on hardware support:
 
 - [✔️] Wi-Fi provisioning via http server
-- [✔️] Requests library based on http client
 - [✔️] Little Filesystem to store temporary data
 - [✔️] GUI using lvgl library 
-- [✖️] OTA Updates using mcumgr
 - [✖️] Spotify Web API Integration
 
 ## Getting Started

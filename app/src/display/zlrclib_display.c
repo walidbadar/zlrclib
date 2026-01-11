@@ -33,7 +33,5 @@ int zlrclib_display_init(void)
 		elapsed += 10;
 	}
 
-	LOG_INF("ZLRCLIB APP Started");
-
 	return 0;
 }
