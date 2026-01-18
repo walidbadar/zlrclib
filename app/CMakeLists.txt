@@ -19,22 +19,4 @@ add_subdirectory_ifdef(CONFIG_FILE_SYSTEM src/filesystem)
 add_subdirectory_ifdef(CONFIG_HTTP_SERVER src/http_server)
 add_subdirectory_ifdef(CONFIG_WIFI_CONNECTION_MANAGER src/wifi)
 
-set(APP_SOURCES 
-  src/main.c
-)
-
-zephyr_include_directories(src)
-target_sources(app PRIVATE ${APP_SOURCES})
-target_link_libraries(app PRIVATE zephyr_interface zephyr)
-
-if(CONFIG_NET_SOCKETS_SOCKOPT_TLS)
-  foreach(cert
-    lrclib.der
-  )
-    generate_inc_file_for_target(
-      app
-      ${CMAKE_SOURCE_DIR}/certs/${cert}
-      ${ZEPHYR_BINARY_DIR}/include/generated/${cert}.inc
-    )
-  endforeach()
-endif()
+target_sources(app PRIVATE src/main.c)
