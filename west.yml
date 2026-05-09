@@ -12,13 +12,14 @@ manifest:
   projects:
     - name: zephyr
       remote: zephyrproject-rtos
-      revision: v4.3.0
+      revision: main
       import:
         # By using name-allowlist we can clone only the modules that are
         # strictly needed by the application.
         name-allowlist:
           - picolibc
           - mcuboot
+          - tf-psa-crypto
           - mbedtls
           - lvgl
           - littlefs

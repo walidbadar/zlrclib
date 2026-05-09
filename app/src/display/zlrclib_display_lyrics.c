@@ -86,17 +86,19 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 	uint8_t *pos_start = NULL;
 	uint8_t *pos_end = NULL;
 	uint8_t url[256];
+	int ssl_peerverify = 0;
+	struct zlrclib_track_info track_info;
+	struct requests_ctx ctx;
+	static lv_obj_t *load_label = NULL;
 
 	zlrclib_rm(LYRICS_FILE);
-
-	static lv_obj_t *load_label = NULL;
+	
 	if (load_label == NULL) {
 		load_label = lv_label_create(lv_scr_act());
 		zlrclib_display_label(load_label);
 		lv_label_set_text(load_label, "Loading...");
 	}
 
-	struct zlrclib_track_info track_info;
 	memcpy(track_info.track_name, TRACK, sizeof(TRACK));
 	memcpy(track_info.artist_name, ARTIST, sizeof(ARTIST));
 
@@ -107,13 +109,13 @@ void zlrclib_display_lyrics_work(struct k_work *item)
 		 track_info.artist_name, track_info.track_name);
 	LOG_INF("URL: %s", url);
 
-	struct requests_ctx ctx;
 	ret = requests_init(&ctx, url);
 	if (ret < 0) {
 		LOG_ERR("Requests init failed");
 		return;
 	}
 
+	requests_setopt(&ctx, REQUESTS_SSL_VERIFYPEER, &ssl_peerverify);
 	requests_setopt(&ctx, REQUESTS_PROTOCOL, "HTTP/1.1");
 	requests_setopt(&ctx, REQUESTS_WRITEFUNCTION, zlrclib_display_lyrics_cb);
 

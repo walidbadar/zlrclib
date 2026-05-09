@@ -87,18 +87,20 @@ static int wifi_creds_parser(struct wifi_creds *creds, uint8_t *buf, size_t len)
 	return ret;
 }
 
-static int connect_handler(struct http_client_ctx *client, enum http_data_status status,
+static int connect_handler(struct http_client_ctx *client, enum http_transaction_status status,
 			   const struct http_request_ctx *request_ctx,
 			   struct http_response_ctx *response_ctx, void *user_data)
 {
 	int ret;
 	struct wifi_creds creds;
+	static size_t processed;
 
-	if (status == HTTP_SERVER_DATA_ABORTED) {
-		LOG_INF("Transaction aborted");
-		return 0;
-	} else if (status == HTTP_SERVER_DATA_MORE) {
-		LOG_INF("More data is received");
+	if (status == HTTP_SERVER_TRANSACTION_ABORTED ||
+	    status == HTTP_SERVER_TRANSACTION_COMPLETE) {
+		if (status == HTTP_SERVER_TRANSACTION_ABORTED) {
+			LOG_DBG("Transaction aborted after %zd bytes.", processed);
+		}
+		processed = 0;
 		return 0;
 	}
 
