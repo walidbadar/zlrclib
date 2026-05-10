@@ -13,15 +13,15 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(wifi_conn_mgr, CONFIG_WIFI_CONNECTION_MANAGER_LOG_LEVEL);
 
-#define NET_EVENT_WIFI_MASK (NET_EVENT_WIFI_CONNECT_RESULT | NET_EVENT_WIFI_DISCONNECT_RESULT)
+BUILD_ASSERT(sizeof(CONFIG_WIFI_STATIC_SSID) > 1,
+	     "CONFIG_WIFI_STATIC_SSID must not be empty");
+
+BUILD_ASSERT(sizeof(CONFIG_WIFI_STATIC_PSK) > 1,
+	     "CONFIG_WIFI_STATIC_PSK must not be empty");
 
 static bool net_dhcpv4_server_status = false;
-
-static struct net_mgmt_event_callback wifi_cb;
 static void wifi_conn_handler(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(wifi_conn_dwork, wifi_conn_handler);
-
-static const struct led_dt_spec wifi_status_led = LED_DT_SPEC_GET(DT_ALIAS(led0));
 
 static int wifi_status(struct net_if *iface, struct wifi_iface_status *status)
 {
@@ -163,6 +163,7 @@ static void wifi_event_handler(struct net_mgmt_event_callback *cb, uint64_t mgmt
 			       struct net_if *iface)
 {
 	ARG_UNUSED(cb);
+	static const struct led_dt_spec wifi_status_led = LED_DT_SPEC_GET(DT_ALIAS(led0));
 
 	struct net_if *iface_sap = net_if_get_wifi_sap();
 	if (IS_ENABLED(CONFIG_WIFI_USAGE_MODE_STA_AP) && !iface_sap) {
@@ -198,13 +199,14 @@ int wifi_connect(struct net_if *iface, const uint8_t *ssid, const uint8_t *psk)
 {
 	struct wifi_connect_req_params config = {0};
 	struct wifi_iface_status status = {0};
+	static struct net_mgmt_event_callback wifi_cb;
 	int ret = 0;
 
-	net_mgmt_init_event_callback(&wifi_cb, wifi_event_handler, NET_EVENT_WIFI_MASK);
+	net_mgmt_init_event_callback(&wifi_cb, wifi_event_handler,
+				     NET_EVENT_WIFI_CONNECT_RESULT | NET_EVENT_WIFI_DISCONNECT_RESULT);
 	net_mgmt_add_event_callback(&wifi_cb);
 
 	wifi_status(iface, &status);
-
 	if (status.state >= WIFI_STATE_ASSOCIATED) {
 		LOG_DBG("Connected to SSID: %s", ssid);
 		return status.state;
