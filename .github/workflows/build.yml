@@ -8,16 +8,12 @@ on:
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04, macos-13, macos-14, windows-2022]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          path: example-application
+          path: zlrclib
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -27,23 +23,28 @@ jobs:
       - name: Setup Zephyr project
         uses: zephyrproject-rtos/action-zephyr-setup@v1
         with:
-          app-path: example-application
-          toolchains: arm-zephyr-eabi
+          app-path: zlrclib
+          toolchains: xtensa-espressif_esp32_zephyr-elf:xtensa-espressif_esp32s3_zephyr-elf
 
       - name: Build firmware
-        working-directory: example-application
+        working-directory: zlrclib
         shell: bash
         run: |
+          west blobs fetch hal_espressif
           if [ "${{ runner.os }}" = "Windows" ]; then
             EXTRA_TWISTER_FLAGS="--short-build-path -O/tmp/twister-out"
           fi
-          west twister -T app -v --inline-logs --integration $EXTRA_TWISTER_FLAGS
+          west twister -T app -v --inline-logs --integration -W \
+            --board-root $(pwd)/boards \
+            $EXTRA_TWISTER_FLAGS
 
       - name: Twister Tests
-        working-directory: example-application
+        working-directory: zlrclib
         shell: bash
         run: |
           if [ "${{ runner.os }}" = "Windows" ]; then
             EXTRA_TWISTER_FLAGS="--short-build-path -O/tmp/twister-out"
           fi
-          west twister -T tests -v --inline-logs --integration $EXTRA_TWISTER_FLAGS
+          west twister -T tests -v --inline-logs --integration \
+            --board-root $(pwd)/boards \
+            $EXTRA_TWISTER_FLAGS
