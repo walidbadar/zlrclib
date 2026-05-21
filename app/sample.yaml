@@ -7,7 +7,7 @@ sample:
 common:
   build_only: true
   integration_platforms:
-    - boards/xtensa/esp32/zlrclibdk/
+    - zlrclibdk/esp32/procpu
 tests:
   app.default: {}
   app.debug:

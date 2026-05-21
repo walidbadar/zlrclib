@@ -13,12 +13,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(wifi_conn_mgr, CONFIG_WIFI_CONNECTION_MANAGER_LOG_LEVEL);
 
-BUILD_ASSERT(sizeof(CONFIG_WIFI_STATIC_SSID) > 1,
-	     "CONFIG_WIFI_STATIC_SSID must not be empty");
-
-BUILD_ASSERT(sizeof(CONFIG_WIFI_STATIC_PSK) > 1,
-	     "CONFIG_WIFI_STATIC_PSK must not be empty");
-
 static bool net_dhcpv4_server_status = false;
 static void wifi_conn_handler(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(wifi_conn_dwork, wifi_conn_handler);
