@@ -31,20 +31,13 @@ jobs:
         shell: bash
         run: |
           west blobs fetch hal_espressif
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            EXTRA_TWISTER_FLAGS="--short-build-path -O/tmp/twister-out"
-          fi
-          west twister -T app -v --inline-logs --integration -W \
-            --board-root $(pwd)/boards \
-            $EXTRA_TWISTER_FLAGS
 
-      - name: Twister Tests
-        working-directory: zlrclib
-        shell: bash
-        run: |
           if [ "${{ runner.os }}" = "Windows" ]; then
-            EXTRA_TWISTER_FLAGS="--short-build-path -O/tmp/twister-out"
+            EXTRA_TWISTER_FLAGS="--short-build-path"
           fi
-          west twister -T tests -v --inline-logs --integration \
+
+          west twister -T app \
+            -O twister-out-build \
+            -v --inline-logs --integration -W \
             --board-root $(pwd)/boards \
             $EXTRA_TWISTER_FLAGS
