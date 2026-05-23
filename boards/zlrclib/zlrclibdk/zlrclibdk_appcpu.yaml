@@ -1,4 +1,4 @@
-identifier: zlrclibdk/appcpu
+identifier: zlrclibdk/esp32/appcpu
 name: ZLRCLIB Development Kit APPCPU
 type: mcu
 arch: xtensa

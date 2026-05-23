@@ -1,4 +1,4 @@
-identifier: zlrclibdk/procpu
+identifier: zlrclibdk/esp32/procpu
 name: ZLRCLIB Development Kit PROCPU
 type: mcu
 arch: xtensa
