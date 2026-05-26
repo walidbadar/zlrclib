@@ -41,7 +41,7 @@ FS_LITTLEFS_DECLARE_DEFAULT_CONFIG(lfs_data);
 static struct fs_mount_t lfs_mnt = {
 	.type = FS_LITTLEFS,
 	.fs_data = &lfs_data,
-	.storage_dev = (void *)FIXED_PARTITION_ID(storage_partition),
+	.storage_dev = (void *)PARTITION_ID(storage_partition),
 	.mnt_point = "/root",
 };
 #endif
